@@ -24,7 +24,7 @@
 // ********************************************************************
 //
 //
-/// \copied from B5DetectorConstruction.hh
+/// \copied from DetectorConstruction.hh
 /// \brief Definition of the DetectorConstruction class
 
 #ifndef DetectorConstruction_h
@@ -70,8 +70,11 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     static G4ThreadLocal G4FieldManager* field_manager_;
     
     G4LogicalVolume* magnetic_logical_;
-    G4LogicalVolume* dcin_wireplane_logical_;
-    G4LogicalVolume* dcout_wireplane_logical_;
+    G4LogicalVolume* cdc_logical_;
+    G4LogicalVolume* chcbarrel_logical_;
+    G4LogicalVolume* ncbarrel_layer1_logical_;
+    G4LogicalVolume* tracker_layer1_logical_;
+    G4LogicalVolume* tracker_layer2_logical_;
 
     std::vector<G4VisAttributes*> fVisAttributes;
     

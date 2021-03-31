@@ -24,7 +24,7 @@
 // ********************************************************************
 //
 // 
-/// \copied from B5RunAction.hh
+/// \copied from RunAction.hh
 /// \brief Definition of the RunAction class
 
 #ifndef RunAction_h

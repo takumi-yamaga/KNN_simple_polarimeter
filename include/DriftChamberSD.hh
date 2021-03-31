@@ -24,7 +24,7 @@
 // ********************************************************************
 //
 //
-/// \copied from B5DriftChamberSD.hh
+/// \copied from DriftChamberSD.hh
 /// \brief Definition of the DriftChamberSD class
 
 #ifndef DriftChamberSD_h

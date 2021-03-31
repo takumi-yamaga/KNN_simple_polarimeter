@@ -24,7 +24,7 @@
 // ********************************************************************
 //
 //
-/// \copied from B5Analysis.hh
+/// \copied from Analysis.hh
 /// \brief Selection of the analysis technology
 
 #ifndef Analysis_h

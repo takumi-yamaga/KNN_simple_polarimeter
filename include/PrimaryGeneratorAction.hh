@@ -24,13 +24,12 @@
 // ********************************************************************
 //
 //
-/// \copied from B5PrimaryGeneratorAction.hh
+/// \copied from PrimaryGeneratorAction.hh
 /// \brief Definition of the PrimaryGeneratorAction class
 
 #ifndef PrimaryGeneratorAction_h
 #define PrimaryGeneratorAction_h 1
 
-#include "ProtonDistributionGenerator.hh"
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"
 

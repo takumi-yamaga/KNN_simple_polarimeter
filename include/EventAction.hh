@@ -24,13 +24,11 @@
 // ********************************************************************
 //
 //
-/// \copied from B5EventAction.hh
+/// \copied from EventAction.hh
 /// \brief Definition of the EventAction class
 
 #ifndef EventAction_h
 #define EventAction_h 1
-
-#include "ProtonDistributionGenerator.hh"
 
 #include "G4UserEventAction.hh"
 #include "globals.hh"

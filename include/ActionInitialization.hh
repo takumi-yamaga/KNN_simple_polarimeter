@@ -24,7 +24,7 @@
 // ********************************************************************
 //
 //
-/// \copied from  B5ActionInitialization.hh
+/// \copied from  ActionInitialization.hh
 /// \brief Definition of the ActionInitialization class
 
 #ifndef ActionInitialization_h

@@ -24,7 +24,7 @@
 // ********************************************************************
 //
 //
-/// \copied from B5DriftChamberHit.hh
+/// \copied from DriftChamberHit.hh
 /// \brief Definition of the DriftChamberHit class
 
 #ifndef DriftChamberHit_h
