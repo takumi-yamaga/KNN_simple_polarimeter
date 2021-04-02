@@ -21,6 +21,7 @@ namespace Hodoscope{
   const G4int kDISCId = 1;
 }
 
+// colors
 namespace Colors{
   // G4Colour(red, green, blue, alpha)
   // alpha = 1. - transparency
