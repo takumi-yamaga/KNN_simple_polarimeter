@@ -287,9 +287,17 @@ void DetectorConstruction::ConstructSDandField()
   G4String SDname;
 
   // sensitive detectors -----------------------------------------------------
-  //auto dcin = new DriftChamberSD(SDname="/dcin");
-  //sdManager->AddNewDetector(dcin);
-  //dcin_wireplane_logical_->SetSensitiveDetector(dcin);
+  auto cdc = new DriftChamberSD(SDname="/cdc");
+  sdManager->AddNewDetector(cdc);
+  cdc_logical_->SetSensitiveDetector(cdc);
+  // -----
+  auto tracker_layer1 = new DriftChamberSD(SDname="/tracker_layer1");
+  sdManager->AddNewDetector(tracker_layer1);
+  tracker_layer1_logical_->SetSensitiveDetector(tracker_layer1);
+  // -----
+  auto tracker_layer2 = new DriftChamberSD(SDname="/tracker_layer2");
+  sdManager->AddNewDetector(tracker_layer2);
+  tracker_layer2_logical_->SetSensitiveDetector(tracker_layer2);
 
   // magnetic field ----------------------------------------------------------
   magnetic_field_ = new SolenoidMagneticField();

@@ -48,7 +48,7 @@ G4VHitsCollection* GetHC(const G4Event* event, G4int collId) {
 
 EventAction::EventAction()
 : G4UserEventAction(), 
-  dc_hitcollection_id_{{ -1, -1 }}
+  driftchamber_hitscollection_ids_{{ -1, -1, -1 }}
 {
   // set printing per each event
   G4RunManager::GetRunManager()->SetPrintProgress(1);
@@ -66,17 +66,17 @@ void EventAction::BeginOfEventAction(const G4Event*)
   // Find hit collections and histogram Ids by names (just once)
   // and save them in the data members of this class
 
-  // hodoscope
-  //if (hodoscope_hits_collection_ids_[0] == -1) {
-  //  auto sd_manager = G4SDManager::GetSDMpointer();
+  // driftchamber
+  if (driftchamber_hitscollection_ids_[0] == -1) {
+    auto sd_manager = G4SDManager::GetSDMpointer();
 
-  //  for (auto i_hodoscope = 0; i_hodoscope < Hodoscope::kTotalNumber; ++i_hodoscope) {
-  //    auto collection_name = Hodoscope::kDetectorNames[i_hodoscope];
-  //    collection_name.append("/hodoscope_hits_collection");
-  //    hodoscope_hits_collection_ids_[i_hodoscope]
-  //      = sd_manager->GetCollectionID(collection_name);
-  //  }
-  //}
+    for (auto i_driftchamber = 0; i_driftchamber < Driftchamber::kTotalNumber; ++i_driftchamber) {
+      auto collection_name = Driftchamber::kDetectorNames[i_driftchamber];
+      collection_name.append("/driftchamber_hitscollection");
+      driftchamber_hitscollection_ids_[i_driftchamber]
+        = sd_manager->GetCollectionID(collection_name);
+    }
+  }
 
 }     
 
@@ -91,19 +91,19 @@ void EventAction::EndOfEventAction(const G4Event* event)
   G4cout << "total_primaries : " << total_primaries << G4endl;
 
   // ======================================================
-  // Hodoscopes ===========================================
+  // Driftchamber =========================================
   // ======================================================
-  //for(auto i_hodoscope=0; i_hodoscope<Hodoscope::kTotalNumber; ++i_hodoscope){
-  //  auto hits_collection = GetHC(event,hodoscope_hits_collection_ids_[i_hodoscope]);
-  //  if(hits_collection){
-  //    for(G4int i_hit=0; i_hit<(G4int)hits_collection->GetSize(); ++i_hit){
-  //      auto hit = hits_collection->GetHit(i_hit);
-  //      if(hit){
-  //        hit->Print();
-  //      }
-  //    }
-  //  }
-  //}
+  for(auto i_driftchamber=0; i_driftchamber<Driftchamber::kTotalNumber; ++i_driftchamber){
+    auto hitscollection = GetHC(event,driftchamber_hitscollection_ids_[i_driftchamber]);
+    if(hitscollection){
+      for(G4int i_hit=0; i_hit<(G4int)hitscollection->GetSize(); ++i_hit){
+        auto hit = hitscollection->GetHit(i_hit);
+        if(hit){
+          hit->Print();
+        }
+      }
+    }
+  }
   // ======================================================
   // ======================================================
 

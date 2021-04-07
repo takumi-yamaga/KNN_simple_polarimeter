@@ -12,13 +12,14 @@
 
 using std::array;
 
-// hodoscopes
-namespace Hodoscope{
-  constexpr G4int kTotalNumber = 2;
+// driftchambers
+namespace Driftchamber{
+  constexpr G4int kTotalNumber = 3;
   const array<G4String, kTotalNumber> kDetectorNames
-    = {{ "cdh", "disc" }};
-  const G4int kCDHId = 0;
-  const G4int kDISCId = 1;
+    = {{ "cdc", "tracker_layer1", "tracker_layer2" }};
+  const G4int kCDCId = 0;
+  const G4int kTrackerLayer1Id = 1;
+  const G4int kTrackerLayer2Id = 2;
 }
 
 // colors
@@ -28,6 +29,7 @@ namespace Colors{
   
   inline G4Colour Scintillator(){ return G4Colour(0.2,1.0,1.0,0.2); }
   inline G4Colour ScintillatorHasHit(){ return G4Colour(1.0,0.0,0.0,0.2); }
+  inline G4Colour DriftchamberHit(){ return G4Colour(1.0,0.0,0.0,0.2); }
   inline G4Colour Reflector(){ return G4Colour(0.7882,0.7922,0.7922,0.1); }
   inline G4Colour LightShield(){ return G4Colour(0.1,0.1,0.1,0.1); }
   inline G4Colour LightGuide(){ return G4Colour(0.0,0.0,1.0,0.5); }

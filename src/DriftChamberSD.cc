@@ -16,7 +16,7 @@ DriftChamberSD::DriftChamberSD(G4String name)
 : G4VSensitiveDetector(name), 
   fHitsCollection(nullptr), fHCID(-1)
 {
-  collectionName.insert("dc_hitcollection");
+  collectionName.insert("driftchamber_hitscollection");
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

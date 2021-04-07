@@ -1,6 +1,7 @@
 /// \brief Implementation of the DriftChamberHit class
 
 #include "DriftChamberHit.hh"
+#include "Constants.hh"
 
 #include "G4VVisManager.hh"
 #include "G4VisAttributes.hh"
@@ -83,9 +84,9 @@ void DriftChamberHit::Draw()
   if (! visManager) return;
 
   G4Circle circle(global_position_);
-  circle.SetScreenSize(2);
+  circle.SetScreenSize(10);
   circle.SetFillStyle(G4Circle::filled);
-  G4VisAttributes attribs(G4Colour::Red());
+  G4VisAttributes attribs(Colors::DriftchamberHit());
   circle.SetVisAttributes(attribs);
   visManager->Draw(circle);
 }
