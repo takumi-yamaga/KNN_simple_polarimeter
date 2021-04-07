@@ -57,3 +57,42 @@ int RootFileManager::CreateNtupleDColumn(const char* column_name){
 
   return column_id;
 }
+// -----
+void RootFileManager::FillNtupleIColumn(const char* ntuple_name, const char* column_name, int val){
+  int ntuple_id = FindNtupleId(ntuple_name);
+  int column_id = FindColumnId(ntuple_name, column_name);
+
+  auto analysis_manager = G4AnalysisManager::Instance();
+  analysis_manager->FillNtupleIColumn(ntuple_id,column_id,val);
+
+  return;
+}
+// -----
+void RootFileManager::FillNtupleFColumn(const char* ntuple_name, const char* column_name, float val){
+  int ntuple_id = FindNtupleId(ntuple_name);
+  int column_id = FindColumnId(ntuple_name, column_name);
+
+  auto analysis_manager = G4AnalysisManager::Instance();
+  analysis_manager->FillNtupleFColumn(ntuple_id,column_id,val);
+
+  return;
+}
+// -----
+void RootFileManager::FillNtupleDColumn(const char* ntuple_name, const char* column_name, double val){
+  int ntuple_id = FindNtupleId(ntuple_name);
+  int column_id = FindColumnId(ntuple_name, column_name);
+
+  auto analysis_manager = G4AnalysisManager::Instance();
+  analysis_manager->FillNtupleDColumn(ntuple_id,column_id,val);
+
+  return;
+}
+// -----
+void RootFileManager::AddNtupleRow(const char* ntuple_name){
+  int ntuple_id = FindNtupleId(ntuple_name);
+
+  auto analysis_manager = G4AnalysisManager::Instance();
+  analysis_manager->AddNtupleRow(ntuple_id);
+
+  return;
+}

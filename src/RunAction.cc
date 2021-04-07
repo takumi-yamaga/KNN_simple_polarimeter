@@ -26,16 +26,6 @@ RunAction::RunAction()
   analysisManager->SetVerboseLevel(1);
   analysisManager->SetFileName("mc_out");
 
-  // Creating 1D histograms
-  //analysisManager // H1-ID = 0
-  //  ->CreateH1("dcin_numhit","dcin : number of hits", 10, 0., 10.);
-  
-  // Creating 2D histograms
-  //analysisManager  // H2-ID = 0                                              
-  //  ->CreateH2("dcin_hitposition_xy","dcin : hit position on x-y plane;x;y",
-  //             50, -100., 100, 50, -100., 100.); 
-
-  // Creating tree_event
   // ====================================================================================================
   rootfile_manager.CreateNtuple("tree_event", "Tree for event information");
   // -----
@@ -43,6 +33,7 @@ RunAction::RunAction()
   rootfile_manager.CreateNtupleIColumn("number_of_primaries");
   rootfile_manager.CreateNtupleIColumn("number_of_hits_in_cdc");
   rootfile_manager.CreateNtupleIColumn("number_of_hits_in_tracker_layer1");
+  rootfile_manager.CreateNtupleIColumn("number_of_hits_in_tracker_layer2");
   // -----
   rootfile_manager.FinishNtuple();
   // ====================================================================================================
@@ -52,6 +43,57 @@ RunAction::RunAction()
   rootfile_manager.CreateNtuple("tree_cdc_hit", "Tree for CDC hit information");
   // -----
   rootfile_manager.CreateNtupleIColumn("event_id");
+  rootfile_manager.CreateNtupleIColumn("track_id");
+  rootfile_manager.CreateNtupleIColumn("parent_id");
+  rootfile_manager.CreateNtupleIColumn("particle_id");
+  rootfile_manager.CreateNtupleIColumn("layer_id");
+  rootfile_manager.CreateNtupleFColumn("hit_time");
+  rootfile_manager.CreateNtupleFColumn("hit_position_x");
+  rootfile_manager.CreateNtupleFColumn("hit_position_y");
+  rootfile_manager.CreateNtupleFColumn("hit_position_z");
+  rootfile_manager.CreateNtupleFColumn("momentum_x");
+  rootfile_manager.CreateNtupleFColumn("momentum_y");
+  rootfile_manager.CreateNtupleFColumn("momentum_z");
+  // -----
+  rootfile_manager.FinishNtuple();
+  // ====================================================================================================
+
+
+  // ====================================================================================================
+  rootfile_manager.CreateNtuple("tree_tracker_layer1_hit", "Tree for TrackerLayer1 hit information");
+  // -----
+  rootfile_manager.CreateNtupleIColumn("event_id");
+  rootfile_manager.CreateNtupleIColumn("track_id");
+  rootfile_manager.CreateNtupleIColumn("parent_id");
+  rootfile_manager.CreateNtupleIColumn("particle_id");
+  rootfile_manager.CreateNtupleIColumn("layer_id");
+  rootfile_manager.CreateNtupleFColumn("hit_time");
+  rootfile_manager.CreateNtupleFColumn("hit_position_x");
+  rootfile_manager.CreateNtupleFColumn("hit_position_y");
+  rootfile_manager.CreateNtupleFColumn("hit_position_z");
+  rootfile_manager.CreateNtupleFColumn("momentum_x");
+  rootfile_manager.CreateNtupleFColumn("momentum_y");
+  rootfile_manager.CreateNtupleFColumn("momentum_z");
+  // -----
+  rootfile_manager.FinishNtuple();
+  // ====================================================================================================
+
+
+  // ====================================================================================================
+  rootfile_manager.CreateNtuple("tree_tracker_layer2_hit", "Tree for TrackerLayer2 hit information");
+  // -----
+  rootfile_manager.CreateNtupleIColumn("event_id");
+  rootfile_manager.CreateNtupleIColumn("track_id");
+  rootfile_manager.CreateNtupleIColumn("parent_id");
+  rootfile_manager.CreateNtupleIColumn("particle_id");
+  rootfile_manager.CreateNtupleIColumn("layer_id");
+  rootfile_manager.CreateNtupleFColumn("hit_time");
+  rootfile_manager.CreateNtupleFColumn("hit_position_x");
+  rootfile_manager.CreateNtupleFColumn("hit_position_y");
+  rootfile_manager.CreateNtupleFColumn("hit_position_z");
+  rootfile_manager.CreateNtupleFColumn("momentum_x");
+  rootfile_manager.CreateNtupleFColumn("momentum_y");
+  rootfile_manager.CreateNtupleFColumn("momentum_z");
   // -----
   rootfile_manager.FinishNtuple();
   // ====================================================================================================

@@ -54,7 +54,8 @@ void SolenoidMagneticField::GetFieldValue(const G4double [4],double *field) cons
 {
   field[0] = 0.;
   field[1] = 0.;
-  field[2] = magnetic_strength_z_;
+  //field[2] = magnetic_strength_z_;
+  field[2] = 0.;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

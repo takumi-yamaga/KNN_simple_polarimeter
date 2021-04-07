@@ -4,6 +4,7 @@
 #include "DriftChamberHit.hh"
 #include "Constants.hh"
 #include "Analysis.hh"
+#include "RootFileManager.hh"
 
 #include "G4Event.hh"
 #include "G4RunManager.hh"
@@ -83,61 +84,136 @@ void EventAction::BeginOfEventAction(const G4Event*)
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void EventAction::EndOfEventAction(const G4Event* event)
 {
-  // Get analysis manager
-  auto analysisManager = G4AnalysisManager::Instance();
+  // get instance of RootFileManager
+  RootFileManager& rootfile_manager = RootFileManager::Instance();
 
-  // Check primary vertex
-  auto total_primaries = event->GetNumberOfPrimaryVertex();
-  G4cout << "total_primaries : " << total_primaries << G4endl;
+  // check event id
+  int event_id = event->GetEventID();
+  rootfile_manager.FillNtupleIColumn("tree_event","event_id",event_id);
+
 
   // ======================================================
   // Driftchamber =========================================
   // ======================================================
-  for(auto i_driftchamber=0; i_driftchamber<Driftchamber::kTotalNumber; ++i_driftchamber){
-    auto hitscollection = GetHC(event,driftchamber_hitscollection_ids_[i_driftchamber]);
-    if(hitscollection){
-      for(G4int i_hit=0; i_hit<(G4int)hitscollection->GetSize(); ++i_hit){
-        auto hit = hitscollection->GetHit(i_hit);
-        if(hit){
-          hit->Print();
-        }
-      }
+
+  // cdc
+  auto cdc_hitscollection = GetHC(event,driftchamber_hitscollection_ids_[Driftchamber::kCDCId]);
+  auto number_of_hits_in_cdc = (int)cdc_hitscollection->GetSize();
+  rootfile_manager.FillNtupleIColumn("tree_event","number_of_hits_in_cdc",number_of_hits_in_cdc);
+  for(G4int i_hit=0; i_hit<number_of_hits_in_cdc; ++i_hit){
+    DriftChamberHit* hit = (DriftChamberHit*)cdc_hitscollection->GetHit(i_hit);
+    if(hit){
+      rootfile_manager.FillNtupleIColumn("tree_cdc_hit","event_id",event_id);
+      // -----
+      int track_id = hit->GetTrackID();
+      rootfile_manager.FillNtupleIColumn("tree_cdc_hit","track_id",track_id);
+      // -----
+      int parent_id = hit->GetTrackID();
+      rootfile_manager.FillNtupleIColumn("tree_cdc_hit","parent_id",parent_id);
+      // -----
+      int particle_id = hit->GetTrackID();
+      rootfile_manager.FillNtupleIColumn("tree_cdc_hit","particle_id",particle_id);
+      // -----
+      int layer_id = hit->GetTrackID();
+      rootfile_manager.FillNtupleIColumn("tree_cdc_hit","layer_id",layer_id);
+      // -----
+      float hit_time = (float)hit->GetHitTime();
+      rootfile_manager.FillNtupleFColumn("tree_cdc_hit","hit_time",hit_time);
+      // -----
+      G4ThreeVector hit_position = hit->GetGlobalPosition();
+      rootfile_manager.FillNtupleFColumn("tree_cdc_hit","hit_position_x",(float)hit_position.x());
+      rootfile_manager.FillNtupleFColumn("tree_cdc_hit","hit_position_y",(float)hit_position.y());
+      rootfile_manager.FillNtupleFColumn("tree_cdc_hit","hit_position_z",(float)hit_position.z());
+      // -----
+      G4ThreeVector momentum = hit->GetMomentum();
+      rootfile_manager.FillNtupleFColumn("tree_cdc_hit","momentum_x",(float)momentum.x());
+      rootfile_manager.FillNtupleFColumn("tree_cdc_hit","momentum_y",(float)momentum.y());
+      rootfile_manager.FillNtupleFColumn("tree_cdc_hit","momentum_z",(float)momentum.z());
+      // -----
+      rootfile_manager.AddNtupleRow("tree_cdc_hit");
     }
   }
-  // ======================================================
-  // ======================================================
+  // -----
 
+  // tracker_layer1
+  auto tracker_layer1_hitscollection = GetHC(event,driftchamber_hitscollection_ids_[Driftchamber::kCDCId]);
+  auto number_of_hits_in_tracker_layer1 = (int)tracker_layer1_hitscollection->GetSize();
+  rootfile_manager.FillNtupleIColumn("tree_event","number_of_hits_in_tracker_layer1",number_of_hits_in_tracker_layer1);
+  for(G4int i_hit=0; i_hit<number_of_hits_in_tracker_layer1; ++i_hit){
+    DriftChamberHit* hit = (DriftChamberHit*)tracker_layer1_hitscollection->GetHit(i_hit);
+    if(hit){
+      rootfile_manager.FillNtupleIColumn("tree_tracker_layer1_hit","event_id",event_id);
+      // -----
+      int track_id = hit->GetTrackID();
+      rootfile_manager.FillNtupleIColumn("tree_tracker_layer1_hit","track_id",track_id);
+      // -----
+      int parent_id = hit->GetTrackID();
+      rootfile_manager.FillNtupleIColumn("tree_tracker_layer1_hit","parent_id",parent_id);
+      // -----
+      int particle_id = hit->GetTrackID();
+      rootfile_manager.FillNtupleIColumn("tree_tracker_layer1_hit","particle_id",particle_id);
+      // -----
+      int layer_id = hit->GetTrackID();
+      rootfile_manager.FillNtupleIColumn("tree_tracker_layer1_hit","layer_id",layer_id);
+      // -----
+      float hit_time = (float)hit->GetHitTime();
+      rootfile_manager.FillNtupleFColumn("tree_tracker_layer1_hit","hit_time",hit_time);
+      // -----
+      G4ThreeVector hit_position = hit->GetGlobalPosition();
+      rootfile_manager.FillNtupleFColumn("tree_tracker_layer1_hit","hit_position_x",(float)hit_position.x());
+      rootfile_manager.FillNtupleFColumn("tree_tracker_layer1_hit","hit_position_y",(float)hit_position.y());
+      rootfile_manager.FillNtupleFColumn("tree_tracker_layer1_hit","hit_position_z",(float)hit_position.z());
+      // -----
+      G4ThreeVector momentum = hit->GetMomentum();
+      rootfile_manager.FillNtupleFColumn("tree_tracker_layer1_hit","momentum_x",(float)momentum.x());
+      rootfile_manager.FillNtupleFColumn("tree_tracker_layer1_hit","momentum_y",(float)momentum.y());
+      rootfile_manager.FillNtupleFColumn("tree_tracker_layer1_hit","momentum_z",(float)momentum.z());
+      // -----
+      rootfile_manager.AddNtupleRow("tree_tracker_layer1_hit");
+    }
+  }
+  // -----
 
-  // ======================================================
-  // Fill Tree ============================================
-  // ======================================================
-  //if(dcin_has_hit){
-  //  analysisManager->FillNtupleIColumn(0,dcin_total_hits);
-  //  analysisManager->FillNtupleFColumn(1,(G4float)dcin_position.x());
-  //  analysisManager->FillNtupleFColumn(2,(G4float)dcin_position.y());
-  //  analysisManager->FillNtupleFColumn(3,(G4float)dcin_position.z());
-  //  analysisManager->FillNtupleFColumn(4,(G4float)dcin_momentum.x());
-  //  analysisManager->FillNtupleFColumn(5,(G4float)dcin_momentum.y());
-  //  analysisManager->FillNtupleFColumn(6,(G4float)dcin_momentum.z());
-  //}
-  //analysisManager->AddNtupleRow();
-  // ======================================================
-  // ======================================================
+  // tracker_layer2
+  auto tracker_layer2_hitscollection = GetHC(event,driftchamber_hitscollection_ids_[Driftchamber::kCDCId]);
+  auto number_of_hits_in_tracker_layer2 = (int)tracker_layer2_hitscollection->GetSize();
+  rootfile_manager.FillNtupleIColumn("tree_event","number_of_hits_in_tracker_layer2",number_of_hits_in_tracker_layer2);
+  for(G4int i_hit=0; i_hit<number_of_hits_in_tracker_layer2; ++i_hit){
+    DriftChamberHit* hit = (DriftChamberHit*)tracker_layer2_hitscollection->GetHit(i_hit);
+    if(hit){
+      rootfile_manager.FillNtupleIColumn("tree_tracker_layer2_hit","event_id",event_id);
+      // -----
+      int track_id = hit->GetTrackID();
+      rootfile_manager.FillNtupleIColumn("tree_tracker_layer2_hit","track_id",track_id);
+      // -----
+      int parent_id = hit->GetTrackID();
+      rootfile_manager.FillNtupleIColumn("tree_tracker_layer2_hit","parent_id",parent_id);
+      // -----
+      int particle_id = hit->GetTrackID();
+      rootfile_manager.FillNtupleIColumn("tree_tracker_layer2_hit","particle_id",particle_id);
+      // -----
+      int layer_id = hit->GetTrackID();
+      rootfile_manager.FillNtupleIColumn("tree_tracker_layer2_hit","layer_id",layer_id);
+      // -----
+      float hit_time = (float)hit->GetHitTime();
+      rootfile_manager.FillNtupleFColumn("tree_tracker_layer2_hit","hit_time",hit_time);
+      // -----
+      G4ThreeVector hit_position = hit->GetGlobalPosition();
+      rootfile_manager.FillNtupleFColumn("tree_tracker_layer2_hit","hit_position_x",(float)hit_position.x());
+      rootfile_manager.FillNtupleFColumn("tree_tracker_layer2_hit","hit_position_y",(float)hit_position.y());
+      rootfile_manager.FillNtupleFColumn("tree_tracker_layer2_hit","hit_position_z",(float)hit_position.z());
+      // -----
+      G4ThreeVector momentum = hit->GetMomentum();
+      rootfile_manager.FillNtupleFColumn("tree_tracker_layer2_hit","momentum_x",(float)momentum.x());
+      rootfile_manager.FillNtupleFColumn("tree_tracker_layer2_hit","momentum_y",(float)momentum.y());
+      rootfile_manager.FillNtupleFColumn("tree_tracker_layer2_hit","momentum_z",(float)momentum.z());
+      // -----
+      rootfile_manager.AddNtupleRow("tree_tracker_layer2_hit");
+    }
+  }
+  // -----
 
-
-  ////
-  //// Print diagnostics
-  //// 
-
-  //auto printModulo = G4RunManager::GetRunManager()->GetPrintProgress();
-  //if ( printModulo == 0 || event->GetEventID() % printModulo != 0) return;
-
-  // Drift chambers
-  //for (G4int i_dc = 0; i_dc < kNumberofDCs; ++i_dc) {
-  //  auto hc = GetHC(event, dc_hitcollection_id_[i_dc]);
-  //  if ( ! hc ) return;
-  //  G4cout << "Drift Chamber " << i_dc + 1 << " has " <<  hc->GetSize()  << " hits." << G4endl;
-  //}
+  rootfile_manager.AddNtupleRow("tree_event");
 
   // set printing per each event
   if(event->GetEventID()){

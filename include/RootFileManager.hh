@@ -10,7 +10,7 @@ class RootFileManager final
   private:
     RootFileManager() = default;
     ~RootFileManager() = default;
- 
+
   public:
     RootFileManager(const RootFileManager&) = delete;
     RootFileManager& operator=(const RootFileManager&) = delete;
@@ -38,6 +38,14 @@ class RootFileManager final
     int CreateNtupleIColumn(const char*);
     int CreateNtupleFColumn(const char*);
     int CreateNtupleDColumn(const char*);
+    void FillNtupleIColumn(const char*, const char*,int);
+    void FillNtupleFColumn(const char*, const char*,float);
+    void FillNtupleDColumn(const char*, const char*,double);
+    void AddNtupleRow(const char*);
+
+  private:
+    inline int FindNtupleId(const char*);
+    inline int FindColumnId(const char*, const char*);
 
   public:
     inline int GetNumberOfNtuples();
@@ -157,6 +165,29 @@ inline std::string RootFileManager::GetColumnName(int ntuple_id, int column_id){
   else{
     return std::string("default");
   }
+}
+// -----
+inline int RootFileManager::FindNtupleId(const char* ntuple_name){
+  size_t index = 0;
+  for(std::string name : ntuple_names_){
+    if(name==ntuple_name){
+      return ntuple_ids_[index];
+    }
+    ++index;
+  }
+  return -999;
+}
+// -----
+inline int RootFileManager::FindColumnId(const char* ntuple_name, const char* column_name){
+  int ntuple_id = FindNtupleId(ntuple_name);
+  size_t index = 0;
+  for(std::string name : columns_names_[ntuple_id]){
+    if(name==column_name){
+      return columns_ids_[ntuple_id][index];
+    }
+    ++index;
+  }
+  return -999;
 }
 
 #endif
