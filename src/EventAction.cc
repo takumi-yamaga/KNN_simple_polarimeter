@@ -63,11 +63,87 @@ EventAction::~EventAction()
 
 void EventAction::BeginOfEventAction(const G4Event*)
 {
+  // Find hit collections and histogram Ids by names (just once)
+  // and save them in the data members of this class
+
+  // hodoscope
+  //if (hodoscope_hits_collection_ids_[0] == -1) {
+  //  auto sd_manager = G4SDManager::GetSDMpointer();
+
+  //  for (auto i_hodoscope = 0; i_hodoscope < Hodoscope::kTotalNumber; ++i_hodoscope) {
+  //    auto collection_name = Hodoscope::kDetectorNames[i_hodoscope];
+  //    collection_name.append("/hodoscope_hits_collection");
+  //    hodoscope_hits_collection_ids_[i_hodoscope]
+  //      = sd_manager->GetCollectionID(collection_name);
+  //  }
+  //}
+
 }     
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void EventAction::EndOfEventAction(const G4Event* event)
 {
+  // Get analysis manager
+  auto analysisManager = G4AnalysisManager::Instance();
+
+  // Check primary vertex
+  auto total_primaries = event->GetNumberOfPrimaryVertex();
+  G4cout << "total_primaries : " << total_primaries << G4endl;
+
+  // ======================================================
+  // Hodoscopes ===========================================
+  // ======================================================
+  //for(auto i_hodoscope=0; i_hodoscope<Hodoscope::kTotalNumber; ++i_hodoscope){
+  //  auto hits_collection = GetHC(event,hodoscope_hits_collection_ids_[i_hodoscope]);
+  //  if(hits_collection){
+  //    for(G4int i_hit=0; i_hit<(G4int)hits_collection->GetSize(); ++i_hit){
+  //      auto hit = hits_collection->GetHit(i_hit);
+  //      if(hit){
+  //        hit->Print();
+  //      }
+  //    }
+  //  }
+  //}
+  // ======================================================
+  // ======================================================
+
+
+  // ======================================================
+  // Fill Tree ============================================
+  // ======================================================
+  //if(dcin_has_hit){
+  //  analysisManager->FillNtupleIColumn(0,dcin_total_hits);
+  //  analysisManager->FillNtupleFColumn(1,(G4float)dcin_position.x());
+  //  analysisManager->FillNtupleFColumn(2,(G4float)dcin_position.y());
+  //  analysisManager->FillNtupleFColumn(3,(G4float)dcin_position.z());
+  //  analysisManager->FillNtupleFColumn(4,(G4float)dcin_momentum.x());
+  //  analysisManager->FillNtupleFColumn(5,(G4float)dcin_momentum.y());
+  //  analysisManager->FillNtupleFColumn(6,(G4float)dcin_momentum.z());
+  //}
+  //analysisManager->AddNtupleRow();
+  // ======================================================
+  // ======================================================
+
+
+  ////
+  //// Print diagnostics
+  //// 
+
+  //auto printModulo = G4RunManager::GetRunManager()->GetPrintProgress();
+  //if ( printModulo == 0 || event->GetEventID() % printModulo != 0) return;
+
+  // Drift chambers
+  //for (G4int i_dc = 0; i_dc < kNumberofDCs; ++i_dc) {
+  //  auto hc = GetHC(event, dc_hitcollection_id_[i_dc]);
+  //  if ( ! hc ) return;
+  //  G4cout << "Drift Chamber " << i_dc + 1 << " has " <<  hc->GetSize()  << " hits." << G4endl;
+  //}
+
+  // set printing per each event
+  if(event->GetEventID()){
+    G4int print_progress = (G4int)log10(event->GetEventID());
+    G4RunManager::GetRunManager()->SetPrintProgress(pow(10,print_progress));
+  }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
