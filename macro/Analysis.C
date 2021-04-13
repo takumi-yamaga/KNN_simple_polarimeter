@@ -88,6 +88,7 @@ void Analysis(){
   Float_t cdc_momentum_x;
   Float_t cdc_momentum_y;
   Float_t cdc_momentum_z;
+  Int_t cdc_is_asymmetric_scattering;
   tree_cdc_hit->SetBranchAddress("event_id",&cdc_event_id);
   tree_cdc_hit->SetBranchAddress("track_id",&cdc_track_id);
   tree_cdc_hit->SetBranchAddress("parent_id",&cdc_parent_id);
@@ -100,6 +101,7 @@ void Analysis(){
   tree_cdc_hit->SetBranchAddress("momentum_x",&cdc_momentum_x);
   tree_cdc_hit->SetBranchAddress("momentum_y",&cdc_momentum_y);
   tree_cdc_hit->SetBranchAddress("momentum_z",&cdc_momentum_z);
+  tree_cdc_hit->SetBranchAddress("is_asymmetric_scattering",&cdc_is_asymmetric_scattering);
   // -----
   TTree* tree_tracker_layer1_hit = (TTree*)input_file->Get("tree_tracker_layer1_hit");     
   Int_t tracker_layer1_event_id;
@@ -114,6 +116,7 @@ void Analysis(){
   Float_t tracker_layer1_momentum_x;
   Float_t tracker_layer1_momentum_y;
   Float_t tracker_layer1_momentum_z;
+  Int_t tracker_layer1_is_asymmetric_scattering;
   tree_tracker_layer1_hit->SetBranchAddress("event_id",&tracker_layer1_event_id);
   tree_tracker_layer1_hit->SetBranchAddress("track_id",&tracker_layer1_track_id);
   tree_tracker_layer1_hit->SetBranchAddress("parent_id",&tracker_layer1_parent_id);
@@ -126,6 +129,7 @@ void Analysis(){
   tree_tracker_layer1_hit->SetBranchAddress("momentum_x",&tracker_layer1_momentum_x);
   tree_tracker_layer1_hit->SetBranchAddress("momentum_y",&tracker_layer1_momentum_y);
   tree_tracker_layer1_hit->SetBranchAddress("momentum_z",&tracker_layer1_momentum_z);
+  tree_tracker_layer1_hit->SetBranchAddress("is_asymmetric_scattering",&tracker_layer1_is_asymmetric_scattering);
   // -----
   TTree* tree_tracker_layer2_hit = (TTree*)input_file->Get("tree_tracker_layer2_hit");     
   Int_t tracker_layer2_event_id;
@@ -140,6 +144,7 @@ void Analysis(){
   Float_t tracker_layer2_momentum_x;
   Float_t tracker_layer2_momentum_y;
   Float_t tracker_layer2_momentum_z;
+  Int_t tracker_layer2_is_asymmetric_scattering;
   tree_tracker_layer2_hit->SetBranchAddress("event_id",&tracker_layer2_event_id);
   tree_tracker_layer2_hit->SetBranchAddress("track_id",&tracker_layer2_track_id);
   tree_tracker_layer2_hit->SetBranchAddress("parent_id",&tracker_layer2_parent_id);
@@ -152,6 +157,8 @@ void Analysis(){
   tree_tracker_layer2_hit->SetBranchAddress("momentum_x",&tracker_layer2_momentum_x);
   tree_tracker_layer2_hit->SetBranchAddress("momentum_y",&tracker_layer2_momentum_y);
   tree_tracker_layer2_hit->SetBranchAddress("momentum_z",&tracker_layer2_momentum_z);
+  tree_tracker_layer2_hit->SetBranchAddress("is_asymmetric_scattering",&tracker_layer2_is_asymmetric_scattering);
+  // ------------------------------------------------------
   output_file = new TFile("ana_out.root","recreate");
   CreateHistograms();
   // ------------------------------------------------------
@@ -224,6 +231,7 @@ void Analysis(){
     std::vector<Int_t> cdc_particle_ids;
     std::vector<TVector3> vec_cdc_positions;
     std::vector<TVector3> vec_cdc_momenta;
+    std::vector<Int_t> cdc_are_asymmetric_scattering;
     for(int i_cdc=0; i_cdc<number_of_hits_in_cdc; ++i_cdc){
       tree_cdc_hit->GetEntry(i_entry_cdc);
       ++i_entry_cdc;
@@ -237,6 +245,7 @@ void Analysis(){
       TVector3 vec_cdc_momentum((Double_t)cdc_momentum_x,(Double_t)cdc_momentum_y,(Double_t)cdc_momentum_z);
       vec_cdc_positions.push_back(vec_cdc_position);
       vec_cdc_momenta.push_back(vec_cdc_momentum);
+      cdc_are_asymmetric_scattering.push_back(cdc_is_asymmetric_scattering);
     }
 
     // tracker_layer1
@@ -244,6 +253,7 @@ void Analysis(){
     std::vector<Int_t> tracker_layer1_particle_ids;
     std::vector<TVector3> vec_tracker_layer1_positions;
     std::vector<TVector3> vec_tracker_layer1_momenta;
+    std::vector<Int_t> tracker_layer1_are_asymmetric_scattering;
     for(int i_tracker_layer1=0; i_tracker_layer1<number_of_hits_in_tracker_layer1; ++i_tracker_layer1){
       tree_tracker_layer1_hit->GetEntry(i_entry_tracker_layer1);
       ++i_entry_tracker_layer1;
@@ -257,6 +267,7 @@ void Analysis(){
       TVector3 vec_tracker_layer1_momentum((Double_t)tracker_layer1_momentum_x,(Double_t)tracker_layer1_momentum_y,(Double_t)tracker_layer1_momentum_z);
       vec_tracker_layer1_positions.push_back(vec_tracker_layer1_position);
       vec_tracker_layer1_momenta.push_back(vec_tracker_layer1_momentum);
+      tracker_layer1_are_asymmetric_scattering.push_back(tracker_layer1_is_asymmetric_scattering);
     }
 
     // tracker_layer2
@@ -264,6 +275,7 @@ void Analysis(){
     std::vector<Int_t> tracker_layer2_particle_ids;
     std::vector<TVector3> vec_tracker_layer2_positions;
     std::vector<TVector3> vec_tracker_layer2_momenta;
+    std::vector<Int_t> tracker_layer2_are_asymmetric_scattering;
     for(int i_tracker_layer2=0; i_tracker_layer2<number_of_hits_in_tracker_layer2; ++i_tracker_layer2){
       tree_tracker_layer2_hit->GetEntry(i_entry_tracker_layer2);
       ++i_entry_tracker_layer2;
@@ -277,7 +289,9 @@ void Analysis(){
       TVector3 vec_tracker_layer2_momentum((Double_t)tracker_layer2_momentum_x,(Double_t)tracker_layer2_momentum_y,(Double_t)tracker_layer2_momentum_z);
       vec_tracker_layer2_positions.push_back(vec_tracker_layer2_position);
       vec_tracker_layer2_momenta.push_back(vec_tracker_layer2_momentum);
+      tracker_layer2_are_asymmetric_scattering.push_back(tracker_layer2_is_asymmetric_scattering);
     }
+
 
     // ====================================================================================================
     // ====================================================================================================
@@ -360,9 +374,13 @@ void Analysis(){
     // checking tracker_layer1 & layer2 (proton to be detected)
     bool is_proton_detected_by_tracker_layer1 = false;
     bool is_proton_detected_by_tracker_layer2 = false;
+    bool is_proton_asymmetric_scattering = false;
     for(int i_tracker_layer1=0; i_tracker_layer1<number_of_hits_in_tracker_layer1; ++i_tracker_layer1){
       if(tracker_layer1_parent_ids[i_tracker_layer1]==0&&tracker_layer1_particle_ids[i_tracker_layer1]==2212){
         is_proton_detected_by_tracker_layer1 = true;
+        if(tracker_layer1_are_asymmetric_scattering[i_tracker_layer1]){
+          is_proton_asymmetric_scattering = true;
+        }
       }
     }
     for(int i_tracker_layer2=0; i_tracker_layer2<number_of_hits_in_tracker_layer2; ++i_tracker_layer2){
@@ -427,7 +445,10 @@ void Analysis(){
     }
 
     // after selectino
-    if(!is_theta_selected){
+    //if(!is_theta_selected){
+    //  continue;
+    //}
+    if(!is_proton_asymmetric_scattering){
       continue;
     }
     ((TH1F*)output_file->Get("scattering_angle_theta_sel"))->Fill(scattering_angle_theta);

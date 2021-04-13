@@ -243,7 +243,7 @@ void EventAction::EndOfEventAction(const G4Event* event)
       rootfile_manager.FillNtupleFColumn("tree_tracker_layer1_hit","momentum_z",(float)momentum.z());
       // -----
       int is_asymmetric_scattering = (int)hit->IsAsymmetricScattering();
-      rootfile_manager.FillNtupleIColumn("tree_cdc_hit","is_asymmetric_scattering",is_asymmetric_scattering);
+      rootfile_manager.FillNtupleIColumn("tree_tracker_layer1_hit","is_asymmetric_scattering",is_asymmetric_scattering);
       // -----
       rootfile_manager.AddNtupleRow("tree_tracker_layer1_hit");
     }
@@ -285,7 +285,7 @@ void EventAction::EndOfEventAction(const G4Event* event)
       rootfile_manager.FillNtupleFColumn("tree_tracker_layer2_hit","momentum_z",(float)momentum.z());
       // -----
       int is_asymmetric_scattering = (int)hit->IsAsymmetricScattering();
-      rootfile_manager.FillNtupleIColumn("tree_cdc_hit","is_asymmetric_scattering",is_asymmetric_scattering);
+      rootfile_manager.FillNtupleIColumn("tree_tracker_layer2_hit","is_asymmetric_scattering",is_asymmetric_scattering);
       // -----
       rootfile_manager.AddNtupleRow("tree_tracker_layer2_hit");
     }
