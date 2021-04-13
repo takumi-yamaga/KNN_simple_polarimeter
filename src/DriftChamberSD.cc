@@ -47,10 +47,10 @@ G4bool DriftChamberSD::ProcessHits(G4Step* step, G4TouchableHistory*)
   if (charge==0.) return true;
 
   auto particle_id = track->GetParticleDefinition()->GetPDGEncoding();
-  if(particle_id != 2212) return true;
+  if(particle_id!=-211 && particle_id!=2212) return true;
 
   auto parent_id = track->GetParentID();
-  if(parent_id != 0) return true;
+  //if(parent_id != 0) return true;
   
   auto preStepPoint = step->GetPreStepPoint();
 

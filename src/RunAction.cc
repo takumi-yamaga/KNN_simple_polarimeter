@@ -31,9 +31,47 @@ RunAction::RunAction()
   // -----
   rootfile_manager.CreateNtupleIColumn("event_id");
   rootfile_manager.CreateNtupleIColumn("number_of_primaries");
+  rootfile_manager.CreateNtupleIColumn("number_of_trajectories");
   rootfile_manager.CreateNtupleIColumn("number_of_hits_in_cdc");
   rootfile_manager.CreateNtupleIColumn("number_of_hits_in_tracker_layer1");
   rootfile_manager.CreateNtupleIColumn("number_of_hits_in_tracker_layer2");
+  // -----
+  rootfile_manager.FinishNtuple();
+  // ====================================================================================================
+
+
+  // ====================================================================================================
+  rootfile_manager.CreateNtuple("tree_primary", "Tree for primary vertex information");
+  // -----
+  rootfile_manager.CreateNtupleIColumn("event_id");
+  rootfile_manager.CreateNtupleIColumn("particle_id");
+  rootfile_manager.CreateNtupleFColumn("position_x");
+  rootfile_manager.CreateNtupleFColumn("position_y");
+  rootfile_manager.CreateNtupleFColumn("position_z");
+  rootfile_manager.CreateNtupleFColumn("momentum_x");
+  rootfile_manager.CreateNtupleFColumn("momentum_y");
+  rootfile_manager.CreateNtupleFColumn("momentum_z");
+  rootfile_manager.CreateNtupleFColumn("spin_x");
+  rootfile_manager.CreateNtupleFColumn("spin_y");
+  rootfile_manager.CreateNtupleFColumn("spin_z");
+  // -----
+  rootfile_manager.FinishNtuple();
+  // ====================================================================================================
+
+
+  // ====================================================================================================
+  rootfile_manager.CreateNtuple("tree_trajectory", "Tree for trajectory information");
+  // -----
+  rootfile_manager.CreateNtupleIColumn("event_id");
+  rootfile_manager.CreateNtupleIColumn("track_id");
+  rootfile_manager.CreateNtupleIColumn("parent_id");
+  rootfile_manager.CreateNtupleIColumn("particle_id");
+  rootfile_manager.CreateNtupleFColumn("initial_position_x");
+  rootfile_manager.CreateNtupleFColumn("initial_position_y");
+  rootfile_manager.CreateNtupleFColumn("initial_position_z");
+  rootfile_manager.CreateNtupleFColumn("initial_momentum_x");
+  rootfile_manager.CreateNtupleFColumn("initial_momentum_y");
+  rootfile_manager.CreateNtupleFColumn("initial_momentum_z");
   // -----
   rootfile_manager.FinishNtuple();
   // ====================================================================================================

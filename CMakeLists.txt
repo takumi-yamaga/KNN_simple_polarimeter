@@ -77,6 +77,7 @@ endforeach()
 set(KNN_simple_polarimeter_MACRO
   Analysis.C 
   DrawTools.h 
+  MyConstants.h
   )
 
 foreach(_script ${KNN_simple_polarimeter_MACRO})

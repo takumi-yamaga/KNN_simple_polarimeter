@@ -38,7 +38,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   ConstructParticleGun();
 
   // create KppGenerator
-  kpp_generator_ = new KppGenerator();
+  kpp_generator_ = new KppGenerator(0,-1);
 
   // define commands for this class
   DefineCommands();
@@ -59,7 +59,6 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
 {
-  G4cout << "PrimaryGeneratorAction::GeneratePrimaries()" << G4endl;
   GenerateKpp(event);
 }
 
