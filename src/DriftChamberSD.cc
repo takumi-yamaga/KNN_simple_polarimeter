@@ -2,6 +2,7 @@
 
 #include "DriftChamberSD.hh"
 #include "DriftChamberHit.hh"
+#include "TrackInformation.hh"
 
 #include "G4HCofThisEvent.hh"
 #include "G4TouchableHistory.hh"
@@ -42,6 +43,7 @@ void DriftChamberSD::Initialize(G4HCofThisEvent* hce)
 G4bool DriftChamberSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 {
   auto track = step->GetTrack();
+  TrackInformation* track_information = (TrackInformation*)track->GetUserInformation();
 
   auto charge = track->GetDefinition()->GetPDGCharge();
   if (charge==0.) return true;
@@ -71,7 +73,8 @@ G4bool DriftChamberSD::ProcessHits(G4Step* step, G4TouchableHistory*)
   hit->SetTrackID(track->GetTrackID());
   hit->SetParentID(parent_id);
   hit->SetParticleID(particle_id);
-  
+  hit->AsymmetricScatteringIs(track_information->IsAsymmetricScattering());
+
   fHitsCollection->insert(hit);
   
   return true;

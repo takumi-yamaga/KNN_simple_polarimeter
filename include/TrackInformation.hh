@@ -30,11 +30,13 @@ class TrackInformation : public G4VUserTrackInformation
 
     // setter -----------------------------------------------------------------
     inline void SetCurrentSpinDirection(const G4ThreeVector vect){ current_spin_direction_ = vect; }
+    inline void AsymmetricScatteringIs(const G4bool flag){ is_asymmetric_scattering_ = flag; }
     inline void PushTrackInformation(const G4Track*);
     inline void PushTrackInformation(const TrackInformation*);
     // getter -----------------------------------------------------------------
     inline G4int GetTrackID() const {return track_id_;}
     inline G4int GetParentID() const {return parent_id_;}
+    inline G4bool IsAsymmetricScattering() const {return is_asymmetric_scattering_;}
     inline G4String GetParticleName() const {return particle_name_;}
     inline G4ThreeVector GetInitialMomentum() const {return initial_momentum_;}
     inline G4ThreeVector GetInitialSpinDirection() const {return initial_spin_direction_;}
@@ -62,6 +64,7 @@ class TrackInformation : public G4VUserTrackInformation
     std::vector <G4ThreeVector> parent_initial_positions_;
     std::vector <G4ThreeVector> parent_initial_spin_directions_;
     std::vector <G4ThreeVector> parent_current_spin_directions_;
+    G4bool is_asymmetric_scattering_;
 };
 
 extern G4ThreadLocal
@@ -118,6 +121,7 @@ inline void TrackInformation::PushTrackInformation(const TrackInformation* track
   initial_momentum_ = track_information->initial_momentum_;
   initial_position_ = track_information->initial_position_;
   initial_spin_direction_ = track_information->initial_spin_direction_;
+  is_asymmetric_scattering_ = track_information->is_asymmetric_scattering_;
 }
 
 #endif

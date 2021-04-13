@@ -92,6 +92,7 @@ RunAction::RunAction()
   rootfile_manager.CreateNtupleFColumn("momentum_x");
   rootfile_manager.CreateNtupleFColumn("momentum_y");
   rootfile_manager.CreateNtupleFColumn("momentum_z");
+  rootfile_manager.CreateNtupleIColumn("is_asymmetric_scattering");
   // -----
   rootfile_manager.FinishNtuple();
   // ====================================================================================================
@@ -112,6 +113,7 @@ RunAction::RunAction()
   rootfile_manager.CreateNtupleFColumn("momentum_x");
   rootfile_manager.CreateNtupleFColumn("momentum_y");
   rootfile_manager.CreateNtupleFColumn("momentum_z");
+  rootfile_manager.CreateNtupleIColumn("is_asymmetric_scattering");
   // -----
   rootfile_manager.FinishNtuple();
   // ====================================================================================================
@@ -132,6 +134,7 @@ RunAction::RunAction()
   rootfile_manager.CreateNtupleFColumn("momentum_x");
   rootfile_manager.CreateNtupleFColumn("momentum_y");
   rootfile_manager.CreateNtupleFColumn("momentum_z");
+  rootfile_manager.CreateNtupleIColumn("is_asymmetric_scattering");
   // -----
   rootfile_manager.FinishNtuple();
   // ====================================================================================================

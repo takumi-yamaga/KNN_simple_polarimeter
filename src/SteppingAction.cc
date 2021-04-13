@@ -117,6 +117,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
               G4ThreeVector momentum_direction_after_scattering = ConvertVector(vec_proton_momentum_final.Unit());
               track->SetMomentumDirection(momentum_direction_after_scattering);
               step->GetPostStepPoint()->SetMomentumDirection(momentum_direction_after_scattering);
+              track_information->AsymmetricScatteringIs(true);
             }
             // ==================== hadElastic ====================
 
@@ -148,6 +149,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                 TVector3 vec_proton_momentum_final = proton_scattering_with_spin_->VecProtonMomentumFinal();
                 G4ThreeVector momentum_direction_after_scattering = ConvertVector(vec_proton_momentum_final.Unit());
                 secondary_proton->SetMomentumDirection(momentum_direction_after_scattering);
+                track_information->AsymmetricScatteringIs(true);
               }
             }
             // ==================== proton Inelastic ====================

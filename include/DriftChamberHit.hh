@@ -67,6 +67,9 @@ class DriftChamberHit : public G4VHit
     inline void SetPolarization(G4ThreeVector polarization) { polarization_ = polarization; }
     inline G4ThreeVector GetPolarization() const { return polarization_; }
     
+    inline void AsymmetricScatteringIs(G4bool flag) { is_asymmetric_scattering_ = flag; }
+    inline G4bool IsAsymmetricScattering() const { return is_asymmetric_scattering_; }
+    
   private:
     G4int track_id_;
     G4int parent_id_;
@@ -77,6 +80,7 @@ class DriftChamberHit : public G4VHit
     G4ThreeVector global_position_;
     G4ThreeVector momentum_;
     G4ThreeVector polarization_;
+    G4bool is_asymmetric_scattering_;
 };
 
 using DriftChamberHitsCollection = G4THitsCollection<DriftChamberHit>;

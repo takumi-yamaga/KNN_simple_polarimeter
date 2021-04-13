@@ -16,7 +16,8 @@ TrackInformation::TrackInformation()
   initial_momentum_(0),
   initial_position_(0),
   initial_spin_direction_(0),
-  current_spin_direction_(0)
+  current_spin_direction_(0),
+  is_asymmetric_scattering_(false)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -30,6 +31,7 @@ TrackInformation::TrackInformation(const G4Track* track)
   initial_position_ = track->GetPosition();
   initial_spin_direction_ = track->GetPolarization();
   current_spin_direction_ = initial_spin_direction_;
+  is_asymmetric_scattering_ = false;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -48,6 +50,7 @@ TrackInformation::TrackInformation(const TrackInformation* track_information)
   parent_initial_positions_ = track_information->parent_initial_positions_;
   initial_spin_direction_ = track_information->initial_spin_direction_;
   current_spin_direction_ = track_information->current_spin_direction_;
+  is_asymmetric_scattering_ = track_information->is_asymmetric_scattering_;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -70,6 +73,7 @@ TrackInformation::~TrackInformation()
   parent_initial_positions_ = track_information.parent_initial_positions_;
   initial_spin_direction_ = track_information.initial_spin_direction_;
   current_spin_direction_ = track_information.current_spin_direction_;
+  is_asymmetric_scattering_ = track_information.is_asymmetric_scattering_;
 
   return *this;
 }
@@ -80,5 +84,8 @@ void TrackInformation::Print() const
 {
   G4cout << "track_id : " << track_id_ << " (" << particle_name_ << ")" << G4endl;
   G4cout << "total parent particles : " << parent_track_ids_.size() << G4endl;
+  if(is_asymmetric_scattering_){
+  G4cout << "assymetric scattering" << G4endl;
+  }
 }
 
