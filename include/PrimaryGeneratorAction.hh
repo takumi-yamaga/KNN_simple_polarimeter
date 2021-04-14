@@ -61,7 +61,7 @@ inline void PrimaryGeneratorAction::GenerateKpp(G4Event* event){
   TVector3 vec_lambda_spin_direction = kpp_generator_->VecLambdaSpin();
   G4ThreeVector g4vec_lambda_momentum_direction = ConvertVector(lv_lambda.Vect().Unit());
   G4ThreeVector g4vec_lambda_spin_direction = ConvertVector(vec_lambda_spin_direction);
-  particlegun_lambda->SetParticleEnergy((lv_lambda.E()-lv_lambda.M())*GeV);
+  particlegun_lambda->SetParticleEnergy(lv_lambda.E()-lv_lambda.M());
   particlegun_lambda->SetParticleMomentumDirection(g4vec_lambda_momentum_direction);
   particlegun_lambda->SetParticlePolarization(g4vec_lambda_spin_direction);
   particlegun_lambda->GeneratePrimaryVertex(event);
@@ -72,7 +72,7 @@ inline void PrimaryGeneratorAction::GenerateKpp(G4Event* event){
   TVector3 vec_proton_spin_direction = kpp_generator_->VecProtonSpin();
   G4ThreeVector g4vec_proton_momentum_direction = ConvertVector(lv_proton.Vect().Unit());
   G4ThreeVector g4vec_proton_spin_direction = ConvertVector(vec_proton_spin_direction);
-  particlegun_proton->SetParticleEnergy((lv_proton.E()-lv_proton.M())*GeV);
+  particlegun_proton->SetParticleEnergy(lv_proton.E()-lv_proton.M());
   particlegun_proton->SetParticleMomentumDirection(g4vec_proton_momentum_direction);
   particlegun_proton->SetParticlePolarization(g4vec_proton_spin_direction);
   particlegun_proton->GeneratePrimaryVertex(event);

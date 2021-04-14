@@ -43,6 +43,7 @@
 #include "G4StepLimiterPhysics.hh"
 #include "G4PhysListFactory.hh"
 #include "G4VModularPhysicsList.hh"
+#include "Analysis.hh"
 
 #include "G4VisExecutive.hh"
 #include "G4UIExecutive.hh"
@@ -51,6 +52,38 @@
 
 int main(int argc,char** argv)
 {
+  std::string physics_list_name = "QGSP_BERT_HP";
+  std::string out_file_name = "root/mc_out";
+  std::string macro_name = "run.mac";
+
+  std::istringstream iss;
+  std::cout<<"argc : "<<argc<<std::endl;
+  for (int i = 0 ; i < argc ; i++) {
+    std::string arg = argv[i];
+    std::cout<<"argv["<<i<<"] : "<<argv[i]<<std::endl;
+    iss.str("");
+    iss.clear();
+    if (arg.substr(0, 10) == "--physics=") {
+      iss.str(arg.substr(10));
+      iss >> physics_list_name;
+    }
+    else if (arg.substr(0, 10) == "--outfile=") {
+      iss.str(arg.substr(10));
+      iss >> out_file_name;
+    }
+    else if (arg.substr(0, 8) == "--macro=") {
+      iss.str(arg.substr(8));
+      iss >> macro_name;
+    }
+  }
+  std::cout<<"#############################################################"<<std::endl;
+  std::cout<<"--- optional input files [argument] ---"<<std::endl;
+  std::cout<<"OutFileName       [--outfile=] = "<<out_file_name<<std::endl;
+  std::cout<<"PhysicsListName   [--physics=] = "<<physics_list_name<<std::endl;
+  std::cout<<"MacroFileName     [--macro=]   = "<<macro_name<<std::endl;
+  std::cout<<"#############################################################"<<std::endl;
+    
+
   // Detect interactive mode (if no arguments) and define UI session
   //
   G4UIExecutive* ui = 0;
@@ -66,11 +99,16 @@ int main(int argc,char** argv)
   auto runManager = new G4RunManager;
 #endif
 
+  auto analysisManager = G4AnalysisManager::Instance();
+  G4cout << "Using " << analysisManager->GetType() << G4endl;
+  analysisManager->SetVerboseLevel(1);
+  analysisManager->SetFileName(out_file_name.data());
+
   // Mandatory user initialization classes
   runManager->SetUserInitialization(new DetectorConstruction);
 
   auto physicslist = new PhysicsList();
-  physicslist->AddPhysicsList("QGSP_BERT_HP");
+  physicslist->AddPhysicsList(physics_list_name.data());
   runManager->SetUserInitialization(physicslist);
 
   // User action initialization
@@ -82,14 +120,13 @@ int main(int argc,char** argv)
   // G4VisManager* visManager = new G4VisExecutive("Quiet");
   visManager->Initialize();
 
-
   // Get the pointer to the User Interface manager
   auto UImanager = G4UImanager::GetUIpointer();
 
   if ( !ui ) {
     // execute an argument macro file if exist
     G4String command = "/control/execute ";
-    G4String fileName = argv[1];
+    G4String fileName = macro_name.data();
     UImanager->ApplyCommand(command+fileName);
   }
   else {

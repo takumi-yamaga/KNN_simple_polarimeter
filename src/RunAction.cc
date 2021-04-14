@@ -18,14 +18,6 @@ RunAction::RunAction()
 { 
   RootFileManager& rootfile_manager = RootFileManager::Instance();
 
-  auto analysisManager = G4AnalysisManager::Instance();
-  G4cout << "Using " << analysisManager->GetType() << G4endl;
-
-  // Default settings
-  //analysisManager->SetNtupleMerging(true); // for multi threading
-  analysisManager->SetVerboseLevel(1);
-  analysisManager->SetFileName("mc_out");
-
   // ====================================================================================================
   rootfile_manager.CreateNtuple("tree_event", "Tree for event information");
   // -----

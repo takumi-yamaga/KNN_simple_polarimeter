@@ -7,17 +7,17 @@ KppGenerator::KppGenerator()
   kpp_spin_ = 0;
   kpp_parity_ = -1;
 
-  kpp_mass_ = 2.327518;
-  kpp_width_ = 0.1003277;
-  kpp_formfactor_ = 0.3825931;
+  kpp_mass_ = 2.327518*GeV;
+  kpp_width_ = 0.1003277*GeV;
+  kpp_formfactor_ = 0.3825931*GeV;
 
   lv_target_ = TLorentzVector(0.0, 0.0, 0.0, 0.0);
   lv_target_.SetVectM(TVector3(0.,0.,0.),KppGeneratorCommon::kThreeHeMass);
 
-	f_kpp_mass_ = new TF1("f_kpp_mass","([1]*[1]/4.) / ( (x-[0])*(x-[0]) + [1]*[1]/4)",2.,3.);
+	f_kpp_mass_ = new TF1("f_kpp_mass","([1]*[1]/4.) / ( (x-[0])*(x-[0]) + [1]*[1]/4)",2.*GeV,3.*GeV);
   f_kpp_mass_->SetParameter(0,kpp_mass_);
   f_kpp_mass_->SetParameter(1,kpp_width_);
-	f_kpp_momtrans_ = new TF1("f_kpp_momtrans","exp(-x*x/[0]/[0])",0.,2.);
+	f_kpp_momtrans_ = new TF1("f_kpp_momtrans","exp(-x*x/[0]/[0])",0.*GeV,2.*GeV);
   f_kpp_momtrans_->SetParameter(0,kpp_formfactor_);
 
   random_ = new TRandom3(0);
@@ -28,17 +28,17 @@ KppGenerator::KppGenerator(Int_t kpp_spin, Int_t kpp_parity)
   kpp_spin_ = kpp_spin;
   kpp_parity_ = kpp_parity;
 
-  kpp_mass_ = 2.327518;
-  kpp_width_ = 0.1003277;
-  kpp_formfactor_ = 0.3825931;
+  kpp_mass_ = 2.327518*GeV;
+  kpp_width_ = 0.1003277*GeV;
+  kpp_formfactor_ = 0.3825931*GeV;
 
   lv_target_ = TLorentzVector(0.0, 0.0, 0.0, 0.0);
   lv_target_.SetVectM(TVector3(0.,0.,0.),KppGeneratorCommon::kThreeHeMass);
 
-	f_kpp_mass_ = new TF1("f_kpp_mass","([1]*[1]/4.) / ( (x-[0])*(x-[0]) + [1]*[1]/4)",2.,3.);
+	f_kpp_mass_ = new TF1("f_kpp_mass","([1]*[1]/4.) / ( (x-[0])*(x-[0]) + [1]*[1]/4)",2.*GeV,3.*GeV);
   f_kpp_mass_->SetParameter(0,kpp_mass_);
   f_kpp_mass_->SetParameter(1,kpp_width_);
-	f_kpp_momtrans_ = new TF1("f_kpp_momtrans","exp(-x*x/[0]/[0])",0.,2.);
+	f_kpp_momtrans_ = new TF1("f_kpp_momtrans","exp(-x*x/[0]/[0])",0.*GeV,2.*GeV);
   f_kpp_momtrans_->SetParameter(0,kpp_formfactor_);
 
   random_ = new TRandom3(0);

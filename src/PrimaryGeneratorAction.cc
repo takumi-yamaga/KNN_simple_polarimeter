@@ -23,8 +23,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   auto particle_table = G4ParticleTable::GetParticleTable();
 
   G4ParticleDefinition* beam_particle = particle_table->FindParticle(beam_particle_name_);
-  auto beam_mass = beam_particle->GetPDGMass()/GeV;
-  auto beam_momentum = 1.0; /* GeV/c */
+  auto beam_mass = beam_particle->GetPDGMass();
+  auto beam_momentum = 1.0*GeV;
   auto beam_energy = sqrt(beam_mass*beam_mass+beam_momentum*beam_momentum);
   lv_beam_ = TLorentzVector(0.,0.,beam_momentum,beam_energy);
 

@@ -39,16 +39,22 @@ include_directories($ENV{ROOTSYS}/include)
 # Locate sources and headers for this project
 # NB: headers are included so they will show up in IDEs
 #
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include 
-  ${Geant4_INCLUDE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/analysis_include ${Geant4_INCLUDE_DIR})
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
+#file(GLOB sources_analysis ${PROJECT_SOURCE_DIR}/src/analysis_functions.cc)
+#file(GLOB headers_analysis ${PROJECT_SOURCE_DIR}/include/analysis_functions.hh ${PROJECT_SOURCE_DIR}/include/DrawTools.h ${PROJECT_SOURCE_DIR}/include/MyConstants.h)
+file(GLOB sources_analysis ${PROJECT_SOURCE_DIR}/analysis_src/*.cc)
+file(GLOB headers_analysis ${PROJECT_SOURCE_DIR}/analysis_include/*.hh ${PROJECT_SOURCE_DIR}/analysis_include/*.h)
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(execute-KNN_simple_polarimeter KNN_simple_polarimeter.cc ${sources} ${headers})
 target_link_libraries(execute-KNN_simple_polarimeter ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} -lexpat)
+#
+add_executable(analysis analysis.cc ${sources_analysis} ${headers_analysis})
+target_link_libraries(analysis ${ROOT_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory.
@@ -92,10 +98,10 @@ endforeach()
 # Add program to the project targets
 # (this avoids the need of typing the program name after make)
 #
-add_custom_target(KNN_simple_polarimeter DEPENDS execute-KNN_simple_polarimeter)
+add_custom_target(KNN_simple_polarimeter DEPENDS execute-KNN_simple_polarimeter analysis)
 
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
-install(TARGETS execute-KNN_simple_polarimeter DESTINATION bin)
+#install(TARGETS execute-KNN_simple_polarimeter DESTINATION bin)
 

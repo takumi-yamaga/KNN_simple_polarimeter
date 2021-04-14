@@ -57,6 +57,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
             lambda_decay_->Generate(lv_lambda,vec_lambda_spin_direction);
             TLorentzVector lv_proton = lambda_decay_->LvProton();
             TLorentzVector lv_pim = lambda_decay_->LvPim();
+            TLorentzVector lv_ppim = lv_proton + lv_pim;
             G4ThreeVector g4vec_proton_momentum_direction = ConvertVector(lv_proton.Vect().Unit());
             TVector3 vec_proton_spin_direction = lambda_decay_->VecProtonSpin();
             G4ThreeVector g4vec_proton_spin_direction = ConvertVector(vec_proton_spin_direction);
