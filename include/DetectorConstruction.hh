@@ -73,6 +73,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume* cdc_logical_;
     G4LogicalVolume* chcbarrel_logical_;
     G4LogicalVolume* ncbarrel_layer1_logical_;
+    G4LogicalVolume* ncbarrel_layer2_logical_;
     G4LogicalVolume* tracker_layer1_logical_;
     G4LogicalVolume* tracker_layer2_logical_;
 

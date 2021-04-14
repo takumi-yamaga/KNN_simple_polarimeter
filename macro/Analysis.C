@@ -315,10 +315,6 @@ void Analysis(){
         vec_proton_spin_direction_mc = vec_primary_spins[i_primary];
       }
     }
-    Double_t lambda_spin_direction_theta = vec_lambda_spin_direction_mc.Theta();
-    ((TH1F*)output_file->Get("lambda_spin_direction_theta"))->Fill(lambda_spin_direction_theta);
-    Double_t lambda_spin_direction_phi = vec_lambda_spin_direction_mc.Phi();
-    ((TH1F*)output_file->Get("lambda_spin_direction_phi"))->Fill(lambda_spin_direction_phi);
 
     // trajectory
     Int_t lambda_id = -999;
@@ -346,11 +342,20 @@ void Analysis(){
     }
     TLorentzVector clvec_proton_from_lambda_lambda_rest_mc = lvec_proton_from_lambda_mc;
     clvec_proton_from_lambda_lambda_rest_mc.Boost(-lvec_lambda_mc.BoostVector());
-    //std::cout << clvec_proton_from_lambda_lambda_rest_mc.Px() 
-    //  << ", " << clvec_proton_from_lambda_lambda_rest_mc.Py()
-    //  << ", " << clvec_proton_from_lambda_lambda_rest_mc.Pz()
-    //  << ", " << clvec_proton_from_lambda_lambda_rest_mc.E()
-    //  << std::endl;
+
+    // acceptance cut
+    // proton
+    Double_t proton_momentum_ll = 100.;
+    Double_t pim_momentum_ll = 100.;
+    if(lvec_proton_mc.P()<proton_momentum_ll){
+      continue;
+    }
+    if(lvec_proton_from_lambda_mc.P()<proton_momentum_ll){
+      continue;
+    }
+    if(lvec_pim_from_lambda_mc.P()<pim_momentum_ll){
+      continue;
+    }
 
     // checking cdc (two protons and pim to be detected by cdc)
     bool is_proton_detected_by_cdc = false;
@@ -388,7 +393,7 @@ void Analysis(){
         is_proton_detected_by_tracker_layer2 = true;
       }
     }
-    if(!is_proton_detected_by_tracker_layer1||!is_proton_detected_by_tracker_layer2){
+    if(!is_proton_detected_by_tracker_layer1){
       continue;
     }
 
@@ -413,28 +418,37 @@ void Analysis(){
         vec_proton_position_at_tracker_layer2 = vec_tracker_layer2_positions[i_tracker_layer2];
       }
     }
-    TVector3 vec_proton_direction_afeter_scattering = (vec_proton_position_at_tracker_layer2 - vec_proton_position_at_tracker_layer1).Unit();
+    Double_t ncbarrel_radius = 535. + 3./2. + 50./2.; /* mm */
+    TVector3 vec_proton_position_at_ncbarrel = ncbarrel_radius * vec_proton_position_at_cdc.Unit();
+
+    TVector3 vec_proton_direction_after_scattering = (vec_proton_position_at_tracker_layer2 - vec_proton_position_at_tracker_layer1).Unit();
+    TVector3 vec_proton_direction_after_scattering_rough = (vec_proton_position_at_tracker_layer1 - vec_proton_position_at_ncbarrel).Unit();
 
     // expected spin direction of lambda
     TVector3 vec_lambda_expected_spin_direction = clvec_proton_from_lambda_lambda_rest_mc.Vect().Unit();
     TVector3 vec_lambda_expectec_spin_direction_perp = (vec_lambda_expected_spin_direction - (vec_lambda_expected_spin_direction.Dot(vec_proton_direction_at_cdc))*vec_proton_direction_at_cdc).Unit();
 
-    Double_t difference_of_lambda_spin = acos(vec_lambda_spin_direction_mc.Dot(vec_lambda_expected_spin_direction));
-    ((TH1F*)output_file->Get("difference_of_lambda_spin"))->Fill(difference_of_lambda_spin);
-
-
     // -----
-    Double_t scattering_angle_theta = acos(vec_proton_direction_at_cdc.Dot(vec_proton_direction_afeter_scattering)) /TMath::Pi()*180.;
+    Double_t scattering_angle_theta = acos(vec_proton_direction_at_cdc.Dot(vec_proton_direction_after_scattering)) /TMath::Pi()*180.;
     ((TH1F*)output_file->Get("scattering_angle_theta"))->Fill(scattering_angle_theta);
+    // -----
+    Double_t scattering_angle_theta_rough = acos(vec_proton_direction_at_cdc.Dot(vec_proton_direction_after_scattering_rough)) /TMath::Pi()*180.;
+    ((TH1F*)output_file->Get("scattering_angle_theta_rough"))->Fill(scattering_angle_theta_rough);
 
     // expected spin direction of proton
-    TVector3 vec_proton_expected_spin_direction = vec_proton_direction_at_cdc.Cross(vec_proton_direction_afeter_scattering).Unit();
+    TVector3 vec_proton_expected_spin_direction = vec_proton_direction_at_cdc.Cross(vec_proton_direction_after_scattering).Unit();
+    TVector3 vec_proton_expected_spin_direction_rough = vec_proton_direction_at_cdc.Cross(vec_proton_direction_after_scattering_rough).Unit();
 
     // phi angle between lambda and proton spins 
     Double_t phi_of_spins = acos(vec_lambda_expectec_spin_direction_perp.Dot(vec_proton_expected_spin_direction));
     Double_t phi_sign = vec_lambda_expected_spin_direction.Dot(vec_proton_direction_at_cdc.Cross(vec_proton_expected_spin_direction));
     phi_of_spins *= phi_sign/fabs(phi_sign);
     ((TH1F*)output_file->Get("phi_of_spins"))->Fill(phi_of_spins);
+
+    Double_t phi_of_spins_rough = acos(vec_lambda_expectec_spin_direction_perp.Dot(vec_proton_expected_spin_direction_rough));
+    Double_t phi_sign_rough = vec_lambda_expected_spin_direction.Dot(vec_proton_direction_at_cdc.Cross(vec_proton_expected_spin_direction_rough));
+    phi_of_spins_rough *= phi_sign_rough/fabs(phi_sign_rough);
+    ((TH1F*)output_file->Get("phi_of_spins_rough"))->Fill(phi_of_spins_rough);
 
     // event selection
     Double_t theta_sel_ll = 6.;
@@ -452,8 +466,9 @@ void Analysis(){
       continue;
     }
     ((TH1F*)output_file->Get("scattering_angle_theta_sel"))->Fill(scattering_angle_theta);
+    ((TH1F*)output_file->Get("scattering_angle_theta_rough_sel"))->Fill(scattering_angle_theta_rough);
     ((TH1F*)output_file->Get("phi_of_spins_sel"))->Fill(phi_of_spins);
-    ((TH1F*)output_file->Get("difference_of_lambda_spin_sel"))->Fill(difference_of_lambda_spin);
+    ((TH1F*)output_file->Get("phi_of_spins_rough_sel"))->Fill(phi_of_spins_rough);
 
   }
   // ------------------------------------------------------
@@ -472,11 +487,12 @@ void CreateHistograms(){
   for(int icut=0; icut<2; ++icut){
 
     // 1D histograms
-    new TH1F(Form("lambda_spin_direction_theta%s",cut[icut].Data()),"lambda spin direction theta;#theta (rad.);counts",200,0.,TMath::Pi());
-    new TH1F(Form("lambda_spin_direction_phi%s",cut[icut].Data()),"lambda spin direction phi;#phi (rad.);counts",200,-TMath::Pi(),TMath::Pi());
     new TH1F(Form("scattering_angle_theta%s",cut[icut].Data()),"scattering angle theta;#theta (deg.);counts",200,0.,50.);
-    new TH1F(Form("difference_of_lambda_spin%s",cut[icut].Data()),"difference of measured & generated lambda spins;#theta (rad.);counts",100,0.,TMath::Pi());
+
+    new TH1F(Form("scattering_angle_theta%s",cut[icut].Data()),"scattering angle theta;#theta (deg.);counts",200,0.,50.);
+    new TH1F(Form("scattering_angle_theta_rough%s",cut[icut].Data()),"scattering angle theta;#theta (deg.);counts",200,0.,50.);
     new TH1F(Form("phi_of_spins%s",cut[icut].Data()),"phi between spins;#phi (rad.);counts",10,-TMath::Pi(),TMath::Pi());
+    new TH1F(Form("phi_of_spins_rough%s",cut[icut].Data()),"phi between spins;#phi (rad.);counts",10,-TMath::Pi(),TMath::Pi());
   }
 
 }
@@ -495,16 +511,6 @@ void DrawHistograms(){
   //gPad->SetLogy();
   // --------------
 
-  // lambda_spin_direction_theta
-  hist_1d = (TH1F*)output_file->Get("lambda_spin_direction_theta");
-  Draw(hist_1d);
-  canvas->Print(pdf_name);
-
-  // lambda_spin_direction_phi
-  hist_1d = (TH1F*)output_file->Get("lambda_spin_direction_phi");
-  Draw(hist_1d);
-  canvas->Print(pdf_name);
-
   // scattering_angle_theta
   gPad->SetLogy();
   hist_1d = (TH1F*)output_file->Get("scattering_angle_theta");
@@ -512,13 +518,21 @@ void DrawHistograms(){
   canvas->Print(pdf_name);
   gPad->SetLogy(0);
 
-  // difference_of_lambda_spin
-  hist_1d = (TH1F*)output_file->Get("difference_of_lambda_spin");
+  // scattering_angle_theta_rough
+  gPad->SetLogy();
+  hist_1d = (TH1F*)output_file->Get("scattering_angle_theta_rough");
   Draw(hist_1d);
   canvas->Print(pdf_name);
+  gPad->SetLogy(0);
 
   // phi_of_spins
   hist_1d = (TH1F*)output_file->Get("phi_of_spins");
+  Draw(hist_1d);
+  hist_1d->SetMinimum(0);
+  canvas->Print(pdf_name);
+
+  // phi_of_spins_rough
+  hist_1d = (TH1F*)output_file->Get("phi_of_spins_rough");
   Draw(hist_1d);
   hist_1d->SetMinimum(0);
   canvas->Print(pdf_name);
@@ -535,10 +549,12 @@ void DrawHistograms(){
   canvas->Print(pdf_name);
   gPad->SetLogy(0);
 
-  // difference_of_lambda_spin
-  hist_1d = (TH1F*)output_file->Get("difference_of_lambda_spin_sel");
+  // scattering_angle_theta_rough
+  gPad->SetLogy();
+  hist_1d = (TH1F*)output_file->Get("scattering_angle_theta_rough_sel");
   Draw(hist_1d);
   canvas->Print(pdf_name);
+  gPad->SetLogy(0);
 
   // phi_of_spins
   hist_1d = (TH1F*)output_file->Get("phi_of_spins_sel");
@@ -548,9 +564,27 @@ void DrawHistograms(){
 
   // phi_of_spins
   hist_1d = (TH1F*)output_file->Get("phi_of_spins_sel");
-  Draw(hist_1d);
+  Draw(hist_1d,"e");
   hist_1d->Scale(1./(hist_1d->Integral()/hist_1d->GetNbinsX()));
+  hist_1d->SetMinimum(0.8);
+  hist_1d->SetMaximum(1.2);
+  TF1* f_phi = new TF1("f_phi","1 + [0]*cos(x)",-TMath::Pi(),TMath::Pi());
+  hist_1d->Fit("f_phi");
+  canvas->Print(pdf_name);
+
+  // phi_of_spins_rough
+  hist_1d = (TH1F*)output_file->Get("phi_of_spins_rough_sel");
+  Draw(hist_1d);
   hist_1d->SetMinimum(0);
+  canvas->Print(pdf_name);
+
+  // phi_of_spins_rough
+  hist_1d = (TH1F*)output_file->Get("phi_of_spins_rough_sel");
+  Draw(hist_1d,"e");
+  hist_1d->Scale(1./(hist_1d->Integral()/hist_1d->GetNbinsX()));
+  hist_1d->SetMinimum(0.8);
+  hist_1d->SetMaximum(1.2);
+  hist_1d->Fit("f_phi");
   canvas->Print(pdf_name);
 
   // close pdf file

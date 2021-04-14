@@ -76,7 +76,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   auto csI = G4Material::GetMaterial("G4_CESIUM_IODIDE");
   auto lead = G4Material::GetMaterial("G4_Pb");
   auto carbon = G4Material::GetMaterial("G4_C");
-  auto hydrogen = new G4Material("hydrogen", 1., 1.01*g/mole, 1.*g/cm3);
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -203,11 +202,27 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
         magnetic_logical_,false,0,checkOverlaps);
   // ====================================================================================================
 
-  auto tracker_layer1_layer2_distance = 50.*mm;
+
+  // NCbarrel_layer2 ====================================================================================
+  auto ncbarrel_layer2_size_thickness = 50.*mm;
+  auto ncbarrel_layer2_size_r = tracker_layer1_size_r + tracker_layer1_size_thickness/2. + ncbarrel_layer2_size_thickness/2.;
+  auto ncbarrel_layer2_size_z = 2570.*mm;
+  // -----
+  auto ncbarrel_layer2_solid
+    = new G4Tubs("ncbarrel_layer2_solid",ncbarrel_layer2_size_r-(ncbarrel_layer2_size_thickness-kSpace)/2.,ncbarrel_layer2_size_r+(ncbarrel_layer2_size_thickness-kSpace)/2.,ncbarrel_layer2_size_z/2.,0.,2.*TMath::Pi());
+  // -----
+  ncbarrel_layer2_logical_
+    = new G4LogicalVolume(ncbarrel_layer2_solid,scintillator,"ncbarrel_layer2_logical");
+  // -----
+  auto ncbarrel_layer2_physical
+    = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),ncbarrel_layer2_logical_,"ncbarrel_layer2_logical",
+        magnetic_logical_,false,0,checkOverlaps);
+  // ====================================================================================================
+
 
   // Tracker_layer2 =====================================================================================
   auto tracker_layer2_size_thickness = 5.*mm;
-  auto tracker_layer2_size_r = tracker_layer1_size_r + tracker_layer1_layer2_distance;
+  auto tracker_layer2_size_r = ncbarrel_layer2_size_r + ncbarrel_layer2_size_thickness/2. + tracker_layer2_size_thickness/2.;
   auto tracker_layer2_size_z = 2570.*mm;
   // -----
   auto tracker_layer2_solid
@@ -252,6 +267,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   // -----
   visAttributes = new G4VisAttributes(Colors::Scintillator());
   ncbarrel_layer1_logical_->SetVisAttributes(visAttributes);
+  fVisAttributes.push_back(visAttributes);
+  // -----
+  visAttributes = new G4VisAttributes(Colors::Scintillator());
+  ncbarrel_layer2_logical_->SetVisAttributes(visAttributes);
   fVisAttributes.push_back(visAttributes);
   // -----
   visAttributes = new G4VisAttributes(Colors::WirePlane());
