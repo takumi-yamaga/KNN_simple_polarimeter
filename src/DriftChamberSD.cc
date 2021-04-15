@@ -53,6 +53,8 @@ G4bool DriftChamberSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 
   auto parent_id = track->GetParentID();
   //if(parent_id != 0) return true;
+
+  auto track_id = track->GetTrackID();
   
   auto preStepPoint = step->GetPreStepPoint();
 
@@ -64,19 +66,31 @@ G4bool DriftChamberSD::ProcessHits(G4Step* step, G4TouchableHistory*)
   auto local_position
     = touchable->GetHistory()->GetTopTransform().TransformPoint(global_position);
 
-  auto hit = new DriftChamberHit(copyNo);
-  hit->SetGlobalPosition(global_position);
-  hit->SetLocalPosition(local_position);
-  hit->SetHitTime(preStepPoint->GetGlobalTime());
-  hit->SetMomentum(preStepPoint->GetMomentum());
-  hit->SetPolarization(track->GetPolarization());
-  hit->SetTrackID(track->GetTrackID());
-  hit->SetParentID(parent_id);
-  hit->SetParticleID(particle_id);
-  hit->AsymmetricScatteringIs(track_information->IsAsymmetricScattering());
+  // check a track have already hit a counter
+  G4bool have_track_already_hit = false;
+  auto number_of_hits = (int)fHitsCollection->GetSize();
+  for(G4int i_hit=0; i_hit<number_of_hits; ++i_hit){
+    DriftChamberHit* hit = (DriftChamberHit*)fHitsCollection->GetHit(i_hit);
+    if(hit->GetTrackID()==track_id){
+      have_track_already_hit = true;
+    }
+  }
 
-  fHitsCollection->insert(hit);
-  
+  if(!have_track_already_hit){
+    auto hit = new DriftChamberHit(copyNo);
+    hit->SetGlobalPosition(global_position);
+    hit->SetLocalPosition(local_position);
+    hit->SetHitTime(preStepPoint->GetGlobalTime());
+    hit->SetMomentum(preStepPoint->GetMomentum());
+    hit->SetPolarization(track->GetPolarization());
+    hit->SetTrackID(track->GetTrackID());
+    hit->SetParentID(parent_id);
+    hit->SetParticleID(particle_id);
+    hit->AsymmetricScatteringIs(track_information->IsAsymmetricScattering());
+
+    fHitsCollection->insert(hit);
+  }
+
   return true;
 }
 

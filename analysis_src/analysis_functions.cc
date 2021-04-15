@@ -6,6 +6,7 @@
 
 #include"TF1.h"
 #include"TLorentzVector.h"
+#include"TLatex.h"
 
 // -----
 TTree* tree_event;
@@ -88,139 +89,151 @@ Int_t tracker_layer2_is_asymmetric_scattering;
 // -----
 
 void DrawHistograms(TFile* outfile, std::string pdf_name){
-  TCanvas* canvas = new TCanvas("canvas","canvas",500,500);
+  TCanvas* c_title = new TCanvas("c_title","c_title",1500,1000);
+  c_title->cd();
+  c_title->Divide(3,2);
+
+  TCanvas* canvas = new TCanvas("canvas","canvas",1500,1000);
   canvas->cd();
+  canvas->Divide(3,2);
 
   // open pdf file
   canvas->Print(std::string(pdf_name + "[").data());
 
   TH1F* hist_1d = nullptr;
+  TH1F* hist_1d_clone = nullptr;
   TH2F* hist_2d = nullptr;
 
-  // proton_momentum
-  hist_1d = (TH1F*)outfile->Get("proton_momentum");
-  Draw(hist_1d);
-  hist_1d = (TH1F*)outfile->Get("proton_momentum_sel");
-  Draw(hist_1d,"same");
-  canvas->Print(pdf_name.data());
+  TLatex* text = new TLatex();
+  text->SetTextFont(132);
+  text->SetTextAlign(22);
+  text->SetTextSize(0.1);
 
-  // proton_from_lambda_momentum
-  hist_1d = (TH1F*)outfile->Get("proton_from_lambda_momentum");
-  Draw(hist_1d);
-  hist_1d = (TH1F*)outfile->Get("proton_from_lambda_momentum_sel");
-  Draw(hist_1d,"same");
-  canvas->Print(pdf_name.data());
+  TString sel_name[5] = {
+    "",
+    "_mom_both",
+    "_mom_both_asym",
+    "_mom_one",
+    "_mom_one_asym"
+  };
 
-  // pim_from_lambda_momentum
-  hist_1d = (TH1F*)outfile->Get("pim_from_lambda_momentum");
-  Draw(hist_1d);
-  hist_1d = (TH1F*)outfile->Get("pim_from_lambda_momentum_sel");
-  Draw(hist_1d,"same");
-  canvas->Print(pdf_name.data());
+  for(int i_sel=0; i_sel<5; ++i_sel){
+    std::cout << sel_name[i_sel].Data() << std::endl;
+    c_title->Clear();
+    c_title->cd();
+    text->DrawLatex(0.5,0.5,Form("%s",sel_name[i_sel].Data()));
+    c_title->Print(pdf_name.data());
 
-  // lp_mass
-  hist_1d = (TH1F*)outfile->Get("lp_mass");
-  Draw(hist_1d);
-  hist_1d = (TH1F*)outfile->Get("lp_mass_sel");
-  Draw(hist_1d,"same");
-  canvas->Print(pdf_name.data());
+    // page-1
+    // proton_momentum
+    canvas->cd(1);
+    hist_1d = (TH1F*)outfile->Get(Form("proton_momentum%s",sel_name[i_sel].Data()));
+    Draw(hist_1d);
 
-  // lp_momentum
-  hist_1d = (TH1F*)outfile->Get("lp_momentum");
-  Draw(hist_1d);
-  hist_1d = (TH1F*)outfile->Get("lp_momentum_sel");
-  Draw(hist_1d,"same");
-  canvas->Print(pdf_name.data());
+    // proton_from_lambda_momentum
+    canvas->cd(2);
+    hist_1d = (TH1F*)outfile->Get(Form("proton_from_lambda_momentum%s",sel_name[i_sel].Data()));
+    Draw(hist_1d);
 
-  // ppim_mass
-  hist_1d = (TH1F*)outfile->Get("ppim_mass");
-  Draw(hist_1d);
-  hist_1d = (TH1F*)outfile->Get("ppim_mass_sel");
-  Draw(hist_1d,"same");
-  canvas->Print(pdf_name.data());
+    // pim_from_lambda_momentum
+    canvas->cd(3);
+    hist_1d = (TH1F*)outfile->Get(Form("pim_from_lambda_momentum%s",sel_name[i_sel].Data()));
+    Draw(hist_1d);
 
-  // ppim_momentum
-  hist_1d = (TH1F*)outfile->Get("ppim_momentum");
-  Draw(hist_1d);
-  hist_1d = (TH1F*)outfile->Get("ppim_momentum_sel");
-  Draw(hist_1d,"same");
-  canvas->Print(pdf_name.data());
+    canvas->Print(pdf_name.data());
+    for(int i_pad=1; i_pad<=6; i_pad++){
+      canvas->cd(i_pad)->Clear();
+    }
+    // -----
 
-  // scattering_angle_theta
-  gPad->SetLogy();
-  hist_1d = (TH1F*)outfile->Get("scattering_angle_theta");
-  Draw(hist_1d);
-  canvas->Print(pdf_name.data());
-  gPad->SetLogy(0);
+    // page-2
+    // lp_mass
+    canvas->cd(1);
+    hist_1d = (TH1F*)outfile->Get(Form("lp_mass%s",sel_name[i_sel].Data()));
+    Draw(hist_1d);
 
-  // scattering_angle_theta_rough
-  gPad->SetLogy();
-  hist_1d = (TH1F*)outfile->Get("scattering_angle_theta_rough");
-  Draw(hist_1d);
-  canvas->Print(pdf_name.data());
-  gPad->SetLogy(0);
+    // lp_momentum
+    canvas->cd(2);
+    hist_1d = (TH1F*)outfile->Get(Form("lp_momentum%s",sel_name[i_sel].Data()));
+    Draw(hist_1d);
 
-  // phi_of_spins
-  hist_1d = (TH1F*)outfile->Get("phi_of_spins");
-  Draw(hist_1d);
-  hist_1d->SetMinimum(0);
-  canvas->Print(pdf_name.data());
+    // ppim_mass
+    canvas->cd(4);
+    hist_1d = (TH1F*)outfile->Get(Form("ppim_mass%s",sel_name[i_sel].Data()));
+    Draw(hist_1d);
 
-  // phi_of_spins_rough
-  hist_1d = (TH1F*)outfile->Get("phi_of_spins_rough");
-  Draw(hist_1d);
-  hist_1d->SetMinimum(0);
-  canvas->Print(pdf_name.data());
+    // ppim_momentum
+    canvas->cd(5);
+    hist_1d = (TH1F*)outfile->Get(Form("ppim_momentum%s",sel_name[i_sel].Data()));
+    Draw(hist_1d);
 
-  // -----
-  canvas->Clear();
-  canvas->Print(pdf_name.data());
-  // -----
+    canvas->Print(pdf_name.data());
+    for(int i_pad=1; i_pad<=6; i_pad++){
+      canvas->cd(i_pad)->Clear();
+    }
+    // -----
 
-  // scattering_angle_theta
-  gPad->SetLogy();
-  hist_1d = (TH1F*)outfile->Get("scattering_angle_theta_sel");
-  Draw(hist_1d);
-  canvas->Print(pdf_name.data());
-  gPad->SetLogy(0);
+    // page-3
+    TF1* f_phi = new TF1("f_phi","1 + [0]*cos(x)",-TMath::Pi(),TMath::Pi());
+    // scattering_angle_theta
+    canvas->cd(1);
+    gPad->SetLogy();
+    hist_1d = (TH1F*)outfile->Get(Form("scattering_angle_theta%s",sel_name[i_sel].Data()));
+    Draw(hist_1d);
 
-  // scattering_angle_theta_rough
-  gPad->SetLogy();
-  hist_1d = (TH1F*)outfile->Get("scattering_angle_theta_rough_sel");
-  Draw(hist_1d);
-  canvas->Print(pdf_name.data());
-  gPad->SetLogy(0);
+    // phi_of_spins
+    canvas->cd(2);
+    hist_1d = (TH1F*)outfile->Get(Form("phi_of_spins%s",sel_name[i_sel].Data()));
+    Draw(hist_1d);
+    hist_1d->SetMinimum(0);
 
-  // phi_of_spins
-  hist_1d = (TH1F*)outfile->Get("phi_of_spins_sel");
-  Draw(hist_1d);
-  hist_1d->SetMinimum(0);
-  canvas->Print(pdf_name.data());
+    // phi_of_spins (scaled & fitting)
+    canvas->cd(3);
+    hist_1d_clone = new TH1F();
+    hist_1d_clone = (TH1F*)hist_1d->Clone();
+    Draw(hist_1d_clone,"e");
+    hist_1d_clone->Scale(1./(hist_1d->Integral()/hist_1d->GetNbinsX()));
+    hist_1d_clone->SetMinimum(0.8);
+    hist_1d_clone->SetMaximum(1.2);
+    if(hist_1d_clone->GetEntries()){
+    hist_1d_clone->Fit("f_phi");
+    }
 
-  // phi_of_spins
-  hist_1d = (TH1F*)outfile->Get("phi_of_spins_sel");
-  Draw(hist_1d,"e");
-  hist_1d->Scale(1./(hist_1d->Integral()/hist_1d->GetNbinsX()));
-  hist_1d->SetMinimum(0.8);
-  hist_1d->SetMaximum(1.2);
-  TF1* f_phi = new TF1("f_phi","1 + [0]*cos(x)",-TMath::Pi(),TMath::Pi());
-  hist_1d->Fit("f_phi");
-  canvas->Print(pdf_name.data());
+    // scattering_angle_theta
+    canvas->cd(4);
+    gPad->SetLogy();
+    hist_1d = (TH1F*)outfile->Get(Form("scattering_angle_theta_rough%s",sel_name[i_sel].Data()));
+    Draw(hist_1d);
 
-  // phi_of_spins_rough
-  hist_1d = (TH1F*)outfile->Get("phi_of_spins_rough_sel");
-  Draw(hist_1d);
-  hist_1d->SetMinimum(0);
-  canvas->Print(pdf_name.data());
+    // phi_of_spins
+    canvas->cd(5);
+    hist_1d = (TH1F*)outfile->Get(Form("phi_of_spins_rough%s",sel_name[i_sel].Data()));
+    Draw(hist_1d);
+    hist_1d->SetMinimum(0);
 
-  // phi_of_spins_rough
-  hist_1d = (TH1F*)outfile->Get("phi_of_spins_rough_sel");
-  Draw(hist_1d,"e");
-  hist_1d->Scale(1./(hist_1d->Integral()/hist_1d->GetNbinsX()));
-  hist_1d->SetMinimum(0.8);
-  hist_1d->SetMaximum(1.2);
-  hist_1d->Fit("f_phi");
-  canvas->Print(pdf_name.data());
+    // phi_of_spins (scaled & fitting)
+    canvas->cd(6);
+    hist_1d_clone = new TH1F();
+    hist_1d_clone = (TH1F*)hist_1d->Clone();
+    Draw(hist_1d_clone,"e");
+    hist_1d_clone->Scale(1./(hist_1d->Integral()/hist_1d->GetNbinsX()));
+    hist_1d_clone->SetMinimum(0.8);
+    hist_1d_clone->SetMaximum(1.2);
+    if(hist_1d_clone->GetEntries()){
+      hist_1d_clone->Fit("f_phi");
+    }
+
+    canvas->Print(pdf_name.data());
+    for(int i_pad=1; i_pad<=6; i_pad++){
+      canvas->cd(i_pad);
+      gPad->SetLogx(0);
+      gPad->SetLogy(0);
+      gPad->SetLogz(0);
+      gPad->Clear();
+    }
+    // -----
+
+  }
 
   // close pdf file
   canvas->Print(std::string(pdf_name + "]").data());
@@ -229,22 +242,29 @@ void DrawHistograms(TFile* outfile, std::string pdf_name){
 void CreateHistograms(TFile* outfile){
   outfile->cd();
 
-  TString cut[2] = {"", "_sel"};
+  TString sel_name[5] = {
+    "",
+    "_mom_both",
+    "_mom_both_asym",
+    "_mom_one",
+    "_mom_one_asym"
+  };
 
-  for(int icut=0; icut<2; ++icut){
+  for(int i_sel=0; i_sel<5; ++i_sel){
     // 1D histograms
-    new TH1F(Form("proton_momentum%s",cut[icut].Data()),"proton momentum;proton momentum (GeV/c);counts",200,0.,2.);
-    new TH1F(Form("proton_from_lambda_momentum%s",cut[icut].Data()),"proton from lambda momentum;proton from #Lambda momentum (GeV/c);counts",200,0.,2.);
-    new TH1F(Form("pim_from_lambda_momentum%s",cut[icut].Data()),"pim from lambda momentum;#pi^{#minus} from #Lambda momentum (GeV/c);counts",200,0.,2.);
-    new TH1F(Form("lp_mass%s",cut[icut].Data()),"lp mass;#Lambdap mass (GeV/c^{2});counts",100,2.,3.);
-    new TH1F(Form("lp_momentum%s",cut[icut].Data()),"lp momentum;#Lambdap momentum (GeV/c);counts",200,0.,2.);
-    new TH1F(Form("ppim_mass%s",cut[icut].Data()),"ppim mass;p#pi^{#minus} mass (GeV/c^{2});counts",100,1.,2.);
-    new TH1F(Form("ppim_momentum%s",cut[icut].Data()),"ppim momentum;p#pi^{#minus} momentum (GeV/c);counts",200,0.,2.);
+    new TH1F(Form("proton_momentum%s",sel_name[i_sel].Data()),"proton momentum;proton momentum (GeV/c);counts",200,0.,2.);
+    new TH1F(Form("proton_from_lambda_momentum%s",sel_name[i_sel].Data()),"proton from lambda momentum;proton from #Lambda momentum (GeV/c);counts",200,0.,2.);
+    new TH1F(Form("pim_from_lambda_momentum%s",sel_name[i_sel].Data()),"pim from lambda momentum;#pi^{#minus} from #Lambda momentum (GeV/c);counts",200,0.,2.);
+    new TH1F(Form("lp_mass%s",sel_name[i_sel].Data()),"lp mass;#Lambdap mass (GeV/c^{2});counts",100,2.,3.);
+    new TH1F(Form("lp_momentum%s",sel_name[i_sel].Data()),"lp momentum;#Lambdap momentum (GeV/c);counts",200,0.,2.);
+    new TH1F(Form("ppim_mass%s",sel_name[i_sel].Data()),"ppim mass;p#pi^{#minus} mass (GeV/c^{2});counts",100,1.,2.);
+    new TH1F(Form("ppim_momentum%s",sel_name[i_sel].Data()),"ppim momentum;p#pi^{#minus} momentum (GeV/c);counts",200,0.,2.);
 
-    new TH1F(Form("scattering_angle_theta%s",cut[icut].Data()),"scattering angle theta;#theta (deg.);counts",200,0.,50.);
-    new TH1F(Form("scattering_angle_theta_rough%s",cut[icut].Data()),"scattering angle theta;#theta (deg.);counts",200,0.,50.);
-    new TH1F(Form("phi_of_spins%s",cut[icut].Data()),"phi between spins;#phi (rad.);counts",10,-TMath::Pi(),TMath::Pi());
-    new TH1F(Form("phi_of_spins_rough%s",cut[icut].Data()),"phi between spins;#phi (rad.);counts",10,-TMath::Pi(),TMath::Pi());
+    new TH1F(Form("scattering_angle_theta%s",sel_name[i_sel].Data()),"scattering angle theta;#theta (deg.);counts",200,0.,50.);
+    new TH1F(Form("phi_of_spins%s",sel_name[i_sel].Data()),"phi between spins;#phi (rad.);counts",10,-TMath::Pi(),TMath::Pi());
+
+    new TH1F(Form("scattering_angle_theta_rough%s",sel_name[i_sel].Data()),"scattering angle theta;#theta (deg.);counts",200,0.,50.);
+    new TH1F(Form("phi_of_spins_rough%s",sel_name[i_sel].Data()),"phi between spins;#phi (rad.);counts",10,-TMath::Pi(),TMath::Pi());
   }
 }
 
@@ -342,6 +362,8 @@ void Analysis(TFile* outfile){
   Int_t total_entries_tracker_layer2 = tree_tracker_layer2_hit->GetEntries();
 
   for(Long64_t i_entry=0; i_entry<total_entries; ++i_entry){
+    // begin of event loop
+
     if((i_entry+1)%(Int_t)pow(10, (Int_t)log10(i_entry+1)) ==0 ){
       std::cout << ">> " << i_entry+1 << std::endl;
     }
@@ -484,6 +506,7 @@ void Analysis(TFile* outfile){
 
     // trajectory
     Int_t lambda_id = -999;
+    Int_t proton_id = -999;
     TLorentzVector lvec_lambda_mc(0.,0.,0.,0.);
     TLorentzVector lvec_proton_mc(0.,0.,0.,0.);
     for(int i_trajectory=0; i_trajectory<number_of_trajectories; ++i_trajectory){
@@ -492,6 +515,7 @@ void Analysis(TFile* outfile){
         lvec_lambda_mc.SetVectM(vec_trajectory_initial_momenta[i_trajectory], mass::lambda);
       }
       if(trajectory_parent_ids[i_trajectory]==0&&trajectory_particle_ids[i_trajectory]==2212){
+        proton_id = trajectory_track_ids[i_trajectory];
         lvec_proton_mc.SetVectM(vec_trajectory_initial_momenta[i_trajectory], mass::proton);
       }
     }
@@ -517,40 +541,6 @@ void Analysis(TFile* outfile){
     TLorentzVector clvec_proton_from_lambda_lambda_rest_mc = lvec_proton_from_lambda_mc;
     clvec_proton_from_lambda_lambda_rest_mc.Boost(-lvec_lambda_mc.BoostVector());
 
-    //std::cout << "proton -- " << std::endl;
-    //PrintVector(lvec_proton_from_lambda_mc.Vect());
-    //std::cout << "pim -- " << std::endl;
-    //PrintVector(lvec_pim_from_lambda_mc.Vect());
-
-    // acceptance cut
-    // proton
-    ((TH1F*)outfile->Get("proton_momentum"))->Fill(lvec_proton_mc.P()/1000.);
-    ((TH1F*)outfile->Get("proton_from_lambda_momentum"))->Fill(lvec_proton_from_lambda_mc.P()/1000.);
-    ((TH1F*)outfile->Get("pim_from_lambda_momentum"))->Fill(lvec_pim_from_lambda_mc.P()/1000.);
-    ((TH1F*)outfile->Get("lp_mass"))->Fill(lvec_lp_mc.M()/1000.);
-    ((TH1F*)outfile->Get("lp_momentum"))->Fill(lvec_lp_mc.P()/1000.);
-    ((TH1F*)outfile->Get("ppim_mass"))->Fill(lvec_ppim_mc.M()/1000.);
-    ((TH1F*)outfile->Get("ppim_momentum"))->Fill(lvec_ppim_mc.P()/1000.);
-
-    Double_t proton_momentum_ll = 100.;
-    Double_t pim_momentum_ll = 100.;
-    if(lvec_proton_mc.P()<proton_momentum_ll){
-      continue;
-    }
-    if(lvec_proton_from_lambda_mc.P()<proton_momentum_ll){
-      continue;
-    }
-    if(lvec_pim_from_lambda_mc.P()<pim_momentum_ll){
-      continue;
-    }
-    ((TH1F*)outfile->Get("proton_momentum_sel"))->Fill(lvec_proton_mc.P()/1000.);
-    ((TH1F*)outfile->Get("proton_from_lambda_momentum_sel"))->Fill(lvec_proton_from_lambda_mc.P()/1000.);
-    ((TH1F*)outfile->Get("pim_from_lambda_momentum_sel"))->Fill(lvec_pim_from_lambda_mc.P()/1000.);
-    ((TH1F*)outfile->Get("lp_mass_sel"))->Fill(lvec_lp_mc.M()/1000.);
-    ((TH1F*)outfile->Get("lp_momentum_sel"))->Fill(lvec_lp_mc.P()/1000.);
-    ((TH1F*)outfile->Get("ppim_mass_sel"))->Fill(lvec_ppim_mc.M()/1000.);
-    ((TH1F*)outfile->Get("ppim_momentum_sel"))->Fill(lvec_ppim_mc.P()/1000.);
-
     // checking cdc (two protons and pim to be detected by cdc)
     bool is_proton_detected_by_cdc = false;
     bool is_proton_from_lambda_detected_by_cdc = false;
@@ -573,22 +563,27 @@ void Analysis(TFile* outfile){
     // checking tracker_layer1 & layer2 (proton to be detected)
     bool is_proton_detected_by_tracker_layer1 = false;
     bool is_proton_detected_by_tracker_layer2 = false;
-    bool is_proton_asymmetric_scattering = false;
+    bool is_asymmetric_scattering_layer1 = false;
+    bool is_asymmetric_scattering_layer2 = false;
     for(int i_tracker_layer1=0; i_tracker_layer1<number_of_hits_in_tracker_layer1; ++i_tracker_layer1){
-      if(tracker_layer1_parent_ids[i_tracker_layer1]==0&&tracker_layer1_particle_ids[i_tracker_layer1]==2212){
-        is_proton_detected_by_tracker_layer1 = true;
-        if(tracker_layer1_are_asymmetric_scattering[i_tracker_layer1]){
-          is_proton_asymmetric_scattering = true;
+      if(tracker_layer1_parent_ids[i_tracker_layer1]==0 || tracker_layer1_parent_ids[i_tracker_layer1]==proton_id){
+        if(tracker_layer1_particle_ids[i_tracker_layer1]==2212){
+          is_proton_detected_by_tracker_layer1 = true;
+          if(tracker_layer1_are_asymmetric_scattering[i_tracker_layer1]){
+            is_asymmetric_scattering_layer1 = true;
+          }
         }
       }
     }
     for(int i_tracker_layer2=0; i_tracker_layer2<number_of_hits_in_tracker_layer2; ++i_tracker_layer2){
-      if(tracker_layer2_parent_ids[i_tracker_layer2]==0&&tracker_layer2_particle_ids[i_tracker_layer2]==2212){
-        is_proton_detected_by_tracker_layer2 = true;
+      if(tracker_layer2_parent_ids[i_tracker_layer2]==0 || tracker_layer2_parent_ids[i_tracker_layer2]==proton_id){
+        if(tracker_layer2_particle_ids[i_tracker_layer2]==2212){
+          is_proton_detected_by_tracker_layer2 = true;
+        }
+        if(tracker_layer2_are_asymmetric_scattering[i_tracker_layer2]){
+          is_asymmetric_scattering_layer2 = true;
+        }
       }
-    }
-    if(!is_proton_detected_by_tracker_layer1){
-      continue;
     }
 
     // checking cdc, tracker1, and tracker2 (to measure proton scattering angle)
@@ -596,22 +591,47 @@ void Analysis(TFile* outfile){
     TVector3 vec_proton_position_at_cdc(0.,0.,0.);
     TVector3 vec_proton_position_at_tracker_layer1(0.,0.,0.);
     TVector3 vec_proton_position_at_tracker_layer2(0.,0.,0.);
+
+    // position & direaction at cdc
     for(int i_cdc=0; i_cdc<number_of_hits_in_cdc; ++i_cdc){
       if(cdc_parent_ids[i_cdc]==0&&cdc_particle_ids[i_cdc]==2212){
         vec_proton_direction_at_cdc = vec_cdc_momenta[i_cdc].Unit();
         vec_proton_position_at_cdc = vec_cdc_positions[i_cdc];
       }
     }
-    for(int i_tracker_layer1=0; i_tracker_layer1<number_of_hits_in_tracker_layer1; ++i_tracker_layer1){
-      if(tracker_layer1_parent_ids[i_tracker_layer1]==0&&tracker_layer1_particle_ids[i_tracker_layer1]==2212){
-        vec_proton_position_at_tracker_layer1 = vec_tracker_layer1_positions[i_tracker_layer1];
+
+    // position & direction at tracker layer1
+    if(is_proton_detected_by_tracker_layer1){
+      for(int i_tracker_layer1=0; i_tracker_layer1<number_of_hits_in_tracker_layer1; ++i_tracker_layer1){
+        if(tracker_layer1_parent_ids[i_tracker_layer1]==0&&tracker_layer1_particle_ids[i_tracker_layer1]==2212){
+          vec_proton_position_at_tracker_layer1 = vec_tracker_layer1_positions[i_tracker_layer1];
+        }
+      }
+      if(vec_proton_position_at_tracker_layer1.Mag()==0.){
+        for(int i_tracker_layer1=0; i_tracker_layer1<number_of_hits_in_tracker_layer1; ++i_tracker_layer1){
+          if(tracker_layer1_parent_ids[i_tracker_layer1]==proton_id&&tracker_layer1_particle_ids[i_tracker_layer1]==2212){
+            vec_proton_position_at_tracker_layer1 = vec_tracker_layer1_positions[i_tracker_layer1];
+          }
+        }
       }
     }
-    for(int i_tracker_layer2=0; i_tracker_layer2<number_of_hits_in_tracker_layer2; ++i_tracker_layer2){
-      if(tracker_layer2_parent_ids[i_tracker_layer2]==0&&tracker_layer2_particle_ids[i_tracker_layer2]==2212){
-        vec_proton_position_at_tracker_layer2 = vec_tracker_layer2_positions[i_tracker_layer2];
+
+    // position & direction at tracker layer2
+    if(is_proton_detected_by_tracker_layer2){
+      for(int i_tracker_layer2=0; i_tracker_layer2<number_of_hits_in_tracker_layer2; ++i_tracker_layer2){
+        if(tracker_layer2_parent_ids[i_tracker_layer2]==0&&tracker_layer2_particle_ids[i_tracker_layer2]==2212){
+          vec_proton_position_at_tracker_layer2 = vec_tracker_layer2_positions[i_tracker_layer2];
+        }
+      }
+      if(vec_proton_position_at_tracker_layer2.Mag()==0.){
+        for(int i_tracker_layer2=0; i_tracker_layer2<number_of_hits_in_tracker_layer2; ++i_tracker_layer2){
+          if(tracker_layer2_parent_ids[i_tracker_layer2]==proton_id&&tracker_layer2_particle_ids[i_tracker_layer2]==2212){
+            vec_proton_position_at_tracker_layer2 = vec_tracker_layer2_positions[i_tracker_layer2];
+          }
+        }
       }
     }
+
     Double_t ncbarrel_radius = 535. + 3./2. + 50./2.; /* mm */
     TVector3 vec_proton_position_at_ncbarrel = ncbarrel_radius * vec_proton_position_at_cdc.Unit();
 
@@ -622,47 +642,97 @@ void Analysis(TFile* outfile){
     TVector3 vec_lambda_expected_spin_direction = clvec_proton_from_lambda_lambda_rest_mc.Vect().Unit();
     TVector3 vec_lambda_expectec_spin_direction_perp = (vec_lambda_expected_spin_direction - (vec_lambda_expected_spin_direction.Dot(vec_proton_direction_at_cdc))*vec_proton_direction_at_cdc).Unit();
 
-    // -----
+    // scattering angle with two trackers
     Double_t scattering_angle_theta = acos(vec_proton_direction_at_cdc.Dot(vec_proton_direction_after_scattering)) /TMath::Pi()*180.;
-    ((TH1F*)outfile->Get("scattering_angle_theta"))->Fill(scattering_angle_theta);
-    // -----
-    Double_t scattering_angle_theta_rough = acos(vec_proton_direction_at_cdc.Dot(vec_proton_direction_after_scattering_rough)) /TMath::Pi()*180.;
-    ((TH1F*)outfile->Get("scattering_angle_theta_rough"))->Fill(scattering_angle_theta_rough);
 
-    // expected spin direction of proton
+    // expected spin direction of proton with two trackers
     TVector3 vec_proton_expected_spin_direction = vec_proton_direction_at_cdc.Cross(vec_proton_direction_after_scattering).Unit();
-    TVector3 vec_proton_expected_spin_direction_rough = vec_proton_direction_at_cdc.Cross(vec_proton_direction_after_scattering_rough).Unit();
 
-    // phi angle between lambda and proton spins 
+    // phi angle between lambda and proton spins with two trackers
     Double_t phi_of_spins = acos(vec_lambda_expectec_spin_direction_perp.Dot(vec_proton_expected_spin_direction));
     Double_t phi_sign = vec_lambda_expected_spin_direction.Dot(vec_proton_direction_at_cdc.Cross(vec_proton_expected_spin_direction));
     phi_of_spins *= phi_sign/fabs(phi_sign);
-    ((TH1F*)outfile->Get("phi_of_spins"))->Fill(phi_of_spins);
 
+    // scattering angle with one tracker
+    Double_t scattering_angle_theta_rough = acos(vec_proton_direction_at_cdc.Dot(vec_proton_direction_after_scattering_rough)) /TMath::Pi()*180.;
+
+    // expected spin direction of proton with one tracker
+    TVector3 vec_proton_expected_spin_direction_rough = vec_proton_direction_at_cdc.Cross(vec_proton_direction_after_scattering_rough).Unit();
+
+    // phi angle between lambda and proton spins with one tracker
     Double_t phi_of_spins_rough = acos(vec_lambda_expectec_spin_direction_perp.Dot(vec_proton_expected_spin_direction_rough));
     Double_t phi_sign_rough = vec_lambda_expected_spin_direction.Dot(vec_proton_direction_at_cdc.Cross(vec_proton_expected_spin_direction_rough));
     phi_of_spins_rough *= phi_sign_rough/fabs(phi_sign_rough);
-    ((TH1F*)outfile->Get("phi_of_spins_rough"))->Fill(phi_of_spins_rough);
 
-    // event selection
+
+    // ====================================================================================================
+    // event selections
+    // ====================================================================================================
+    bool are_momenta_over_threshold = false;
+    Double_t proton_momentum_ll = 100.;
+    Double_t pim_momentum_ll = 100.;
+    if(lvec_proton_mc.P()>proton_momentum_ll&&lvec_proton_from_lambda_mc.P()>proton_momentum_ll&&lvec_pim_from_lambda_mc.P()>pim_momentum_ll){
+      are_momenta_over_threshold = true;
+    }
+
+    bool is_tracker_layer1_fired = false;
+    if(is_proton_detected_by_tracker_layer1){
+      is_tracker_layer1_fired = true;
+    }
+
+    bool are_both_trackers_fired = false;
+    if(is_proton_detected_by_tracker_layer1&&is_proton_detected_by_tracker_layer2){
+      are_both_trackers_fired = true;
+    }
+
+    bool is_asymmetric_scattering = false;
+    if(is_asymmetric_scattering_layer1){
+      is_asymmetric_scattering = true;
+    }
+
+    bool is_scattering_angle_in_region = false;
     Double_t theta_sel_ll = 6.;
     Double_t theta_sel_ul = 14.;
-    bool is_theta_selected = false;
     if(theta_sel_ll<scattering_angle_theta&&scattering_angle_theta<theta_sel_ul){
-      is_theta_selected = true;
+      is_scattering_angle_in_region = true;
     }
 
-    // after selectino
-    //if(!is_theta_selected){
-    //  continue;
-    //}
-    if(!is_proton_asymmetric_scattering){
-      continue;
+    // ====================================================================================================
+
+
+    TString sel_name[5] = {
+      "",
+      "_mom_both",
+      "_mom_both_asym",
+      "_mom_one",
+      "_mom_one_asym"
+    };
+    bool sel_flag[5];
+    sel_flag[0] =  true;
+    sel_flag[1] = are_momenta_over_threshold & are_both_trackers_fired;
+    sel_flag[2] = are_momenta_over_threshold & are_both_trackers_fired & is_asymmetric_scattering;
+    sel_flag[3] = are_momenta_over_threshold & is_tracker_layer1_fired & !are_both_trackers_fired;
+    sel_flag[4] = are_momenta_over_threshold & is_tracker_layer1_fired & !are_both_trackers_fired & is_asymmetric_scattering;
+
+    // Fill histograms
+    for(int i_sel = 0; i_sel<5; ++i_sel){
+      if(sel_flag[i_sel]){
+        ((TH1F*)outfile->Get(Form("proton_momentum%s",sel_name[i_sel].Data())))->Fill(lvec_proton_mc.P()/1000.);
+        ((TH1F*)outfile->Get(Form("proton_from_lambda_momentum%s",sel_name[i_sel].Data())))->Fill(lvec_proton_from_lambda_mc.P()/1000.);
+        ((TH1F*)outfile->Get(Form("pim_from_lambda_momentum%s",sel_name[i_sel].Data())))->Fill(lvec_pim_from_lambda_mc.P()/1000.);
+        ((TH1F*)outfile->Get(Form("lp_mass%s",sel_name[i_sel].Data())))->Fill(lvec_lp_mc.M()/1000.);
+        ((TH1F*)outfile->Get(Form("lp_momentum%s",sel_name[i_sel].Data())))->Fill(lvec_lp_mc.P()/1000.);
+        ((TH1F*)outfile->Get(Form("ppim_mass%s",sel_name[i_sel].Data())))->Fill(lvec_ppim_mc.M()/1000.);
+        ((TH1F*)outfile->Get(Form("ppim_momentum%s",sel_name[i_sel].Data())))->Fill(lvec_ppim_mc.P()/1000.);
+        ((TH1F*)outfile->Get(Form("scattering_angle_theta%s",sel_name[i_sel].Data())))->Fill(scattering_angle_theta);
+        ((TH1F*)outfile->Get(Form("scattering_angle_theta_rough%s",sel_name[i_sel].Data())))->Fill(scattering_angle_theta_rough);
+        ((TH1F*)outfile->Get(Form("phi_of_spins%s",sel_name[i_sel].Data())))->Fill(phi_of_spins);
+        ((TH1F*)outfile->Get(Form("phi_of_spins_rough%s",sel_name[i_sel].Data())))->Fill(phi_of_spins_rough);
+      }
     }
-    ((TH1F*)outfile->Get("scattering_angle_theta_sel"))->Fill(scattering_angle_theta);
-    ((TH1F*)outfile->Get("scattering_angle_theta_rough_sel"))->Fill(scattering_angle_theta_rough);
-    ((TH1F*)outfile->Get("phi_of_spins_sel"))->Fill(phi_of_spins);
-    ((TH1F*)outfile->Get("phi_of_spins_rough_sel"))->Fill(phi_of_spins_rough);
+
+
+    // end of event loop
   }
 
 }
