@@ -66,6 +66,9 @@ set(KNN_simple_polarimeter_SCRIPTS
   init_vis.mac 
   vis.mac
   run.mac 
+  run100k.mac 
+  run1M.mac 
+  run10M.mac 
   run.png
   )
 

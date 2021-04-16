@@ -50,6 +50,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
           G4Track* track_decayproduct1 = (*secondaries)[0];
           G4Track* track_decayproduct2 = (*secondaries)[1];
           G4String decayproduct1_name = track_decayproduct1->GetDefinition()->GetParticleName(); 
+          G4String decayproduct2_name = track_decayproduct2->GetDefinition()->GetParticleName(); 
           if(decayproduct1_name=="proton"||decayproduct1_name=="pi-"){
             G4ThreeVector g4vec_lambda_spin_direction = track_information->GetCurrentSpinDirection();
             TVector3 vec_lambda_spin_direction = ConvertVector(g4vec_lambda_spin_direction);

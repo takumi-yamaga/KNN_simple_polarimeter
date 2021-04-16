@@ -54,6 +54,8 @@ int main(int argc,char** argv)
 
   DrawHistograms(outfile, out_pdf_name);
 
+  outfile->Write();
+  outfile->Close();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

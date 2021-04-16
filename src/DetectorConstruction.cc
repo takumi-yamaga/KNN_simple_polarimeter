@@ -170,7 +170,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
   // NCbarrel_layer1 ====================================================================================
-  auto ncbarrel_layer1_size_thickness = 50.*mm;
+  auto ncbarrel_layer1_size_thickness = 30.*mm;
   auto ncbarrel_layer1_size_r = chcbarrel_size_r + chcbarrel_size_thickness/2. + ncbarrel_layer1_size_thickness/2.;
   auto ncbarrel_layer1_size_z = 2570.*mm;
   // -----
@@ -204,7 +204,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
   // NCbarrel_layer2 ====================================================================================
-  auto ncbarrel_layer2_size_thickness = 50.*mm;
+  auto ncbarrel_layer2_size_thickness = 30.*mm;
   auto ncbarrel_layer2_size_r = tracker_layer1_size_r + tracker_layer1_size_thickness/2. + ncbarrel_layer2_size_thickness/2.;
   auto ncbarrel_layer2_size_z = 2570.*mm;
   // -----

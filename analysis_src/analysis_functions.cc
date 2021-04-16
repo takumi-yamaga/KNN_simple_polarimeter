@@ -109,15 +109,20 @@ void DrawHistograms(TFile* outfile, std::string pdf_name){
   text->SetTextAlign(22);
   text->SetTextSize(0.1);
 
-  TString sel_name[5] = {
+  TString sel_name[10] = {
     "",
-    "_mom_both",
-    "_mom_both_asym",
-    "_mom_one",
-    "_mom_one_asym"
+    "_charged",
+    "_charged_mom",
+    "_charged_mom_cdc",
+    "_charged_mom_cdc_both",
+    "_charged_mom_cdc_both_asym",
+    "_charged_mom_cdc_one",
+    "_charged_mom_cdc_one_asym",
+    "_charged_mom_cdc_lay1",
+    "_charged_mom_cdc_lay1_asym"
   };
 
-  for(int i_sel=0; i_sel<5; ++i_sel){
+  for(int i_sel=0; i_sel<10; ++i_sel){
     std::cout << sel_name[i_sel].Data() << std::endl;
     c_title->Clear();
     c_title->cd();
@@ -125,24 +130,33 @@ void DrawHistograms(TFile* outfile, std::string pdf_name){
     c_title->Print(pdf_name.data());
 
     // page-1
-    // proton_momentum
+    // lambda_momentum
     canvas->cd(1);
+    hist_1d = (TH1F*)outfile->Get(Form("lambda_momentum%s",sel_name[i_sel].Data()));
+    Draw(hist_1d);
+
+    // proton_momentum
+    canvas->cd(2);
     hist_1d = (TH1F*)outfile->Get(Form("proton_momentum%s",sel_name[i_sel].Data()));
     Draw(hist_1d);
 
     // proton_from_lambda_momentum
-    canvas->cd(2);
+    canvas->cd(4);
     hist_1d = (TH1F*)outfile->Get(Form("proton_from_lambda_momentum%s",sel_name[i_sel].Data()));
     Draw(hist_1d);
 
     // pim_from_lambda_momentum
-    canvas->cd(3);
+    canvas->cd(5);
     hist_1d = (TH1F*)outfile->Get(Form("pim_from_lambda_momentum%s",sel_name[i_sel].Data()));
     Draw(hist_1d);
 
     canvas->Print(pdf_name.data());
     for(int i_pad=1; i_pad<=6; i_pad++){
-      canvas->cd(i_pad)->Clear();
+      canvas->cd(i_pad);
+      gPad->SetLogx(0);
+      gPad->SetLogy(0);
+      gPad->SetLogz(0);
+      gPad->Clear();
     }
     // -----
 
@@ -156,6 +170,11 @@ void DrawHistograms(TFile* outfile, std::string pdf_name){
     canvas->cd(2);
     hist_1d = (TH1F*)outfile->Get(Form("lp_momentum%s",sel_name[i_sel].Data()));
     Draw(hist_1d);
+
+    // lp_mass_vs_lp_momentum
+    canvas->cd(3);
+    hist_2d = (TH2F*)outfile->Get(Form("lp_mass_vs_lp_momentum%s",sel_name[i_sel].Data()));
+    Draw(hist_2d,"col");
 
     // ppim_mass
     canvas->cd(4);
@@ -173,7 +192,44 @@ void DrawHistograms(TFile* outfile, std::string pdf_name){
     }
     // -----
 
-    // page-3
+    // page-1
+    // proton_momentum_at_cdc
+    canvas->cd(1);
+    hist_1d = (TH1F*)outfile->Get(Form("proton_momentum_at_cdc%s",sel_name[i_sel].Data()));
+    Draw(hist_1d);
+
+    // proton_momentum_at_tracker_layer1
+    canvas->cd(2);
+    hist_1d = (TH1F*)outfile->Get(Form("proton_momentum_at_tracker_layer1%s",sel_name[i_sel].Data()));
+    Draw(hist_1d);
+
+    // proton_momentum_at_tracker_layer2
+    canvas->cd(3);
+    hist_1d = (TH1F*)outfile->Get(Form("proton_momentum_at_tracker_layer2%s",sel_name[i_sel].Data()));
+    Draw(hist_1d);
+
+    // proton_momentum_difference_between_cdc_and_tracker_layer1
+    canvas->cd(4);
+    hist_1d = (TH1F*)outfile->Get(Form("proton_momentum_difference_between_cdc_and_tracker_layer1%s",sel_name[i_sel].Data()));
+    Draw(hist_1d);
+
+    // scattering_angle_theta_mc
+    canvas->cd(5);
+    gPad->SetLogy();
+    hist_1d = (TH1F*)outfile->Get(Form("scattering_angle_theta_mc%s",sel_name[i_sel].Data()));
+    Draw(hist_1d);
+
+    canvas->Print(pdf_name.data());
+    for(int i_pad=1; i_pad<=6; i_pad++){
+      canvas->cd(i_pad);
+      gPad->SetLogx(0);
+      gPad->SetLogy(0);
+      gPad->SetLogz(0);
+      gPad->Clear();
+    }
+    // -----
+
+    // page-4
     TF1* f_phi = new TF1("f_phi","1 + [0]*cos(x)",-TMath::Pi(),TMath::Pi());
     // scattering_angle_theta
     canvas->cd(1);
@@ -196,7 +252,7 @@ void DrawHistograms(TFile* outfile, std::string pdf_name){
     hist_1d_clone->SetMinimum(0.8);
     hist_1d_clone->SetMaximum(1.2);
     if(hist_1d_clone->GetEntries()){
-    hist_1d_clone->Fit("f_phi");
+      hist_1d_clone->Fit("f_phi");
     }
 
     // scattering_angle_theta
@@ -242,16 +298,22 @@ void DrawHistograms(TFile* outfile, std::string pdf_name){
 void CreateHistograms(TFile* outfile){
   outfile->cd();
 
-  TString sel_name[5] = {
+  TString sel_name[10] = {
     "",
-    "_mom_both",
-    "_mom_both_asym",
-    "_mom_one",
-    "_mom_one_asym"
+    "_charged",
+    "_charged_mom",
+    "_charged_mom_cdc",
+    "_charged_mom_cdc_both",
+    "_charged_mom_cdc_both_asym",
+    "_charged_mom_cdc_one",
+    "_charged_mom_cdc_one_asym",
+    "_charged_mom_cdc_lay1",
+    "_charged_mom_cdc_lay1_asym"
   };
 
-  for(int i_sel=0; i_sel<5; ++i_sel){
+  for(int i_sel=0; i_sel<10; ++i_sel){
     // 1D histograms
+    new TH1F(Form("lambda_momentum%s",sel_name[i_sel].Data()),"lambda momentum;lambda momentum (GeV/c);counts",200,0.,2.);
     new TH1F(Form("proton_momentum%s",sel_name[i_sel].Data()),"proton momentum;proton momentum (GeV/c);counts",200,0.,2.);
     new TH1F(Form("proton_from_lambda_momentum%s",sel_name[i_sel].Data()),"proton from lambda momentum;proton from #Lambda momentum (GeV/c);counts",200,0.,2.);
     new TH1F(Form("pim_from_lambda_momentum%s",sel_name[i_sel].Data()),"pim from lambda momentum;#pi^{#minus} from #Lambda momentum (GeV/c);counts",200,0.,2.);
@@ -260,11 +322,21 @@ void CreateHistograms(TFile* outfile){
     new TH1F(Form("ppim_mass%s",sel_name[i_sel].Data()),"ppim mass;p#pi^{#minus} mass (GeV/c^{2});counts",100,1.,2.);
     new TH1F(Form("ppim_momentum%s",sel_name[i_sel].Data()),"ppim momentum;p#pi^{#minus} momentum (GeV/c);counts",200,0.,2.);
 
+    new TH1F(Form("proton_momentum_at_cdc%s",sel_name[i_sel].Data()),"proton momentum at cdc;proton momentum (GeV/c);counts",200,0.,2.);
+    new TH1F(Form("proton_momentum_at_tracker_layer1%s",sel_name[i_sel].Data()),"proton momentum at tracker_layer1;proton momentum (GeV/c);counts",200,0.,2.);
+    new TH1F(Form("proton_momentum_at_tracker_layer2%s",sel_name[i_sel].Data()),"proton momentum at tracker_layer2;proton momentum (GeV/c);counts",200,0.,2.);
+    new TH1F(Form("proton_momentum_difference_between_cdc_and_tracker_layer1%s",sel_name[i_sel].Data()),"proton momentum difference between cdc and tracker layer1;proton momentum difference(GeV/c);counts",200,0.,0.5);
+
+    new TH1F(Form("scattering_angle_theta_mc%s",sel_name[i_sel].Data()),"scattering angle theta mc value;#theta (deg.);counts",200,0.,50.);
+
     new TH1F(Form("scattering_angle_theta%s",sel_name[i_sel].Data()),"scattering angle theta;#theta (deg.);counts",200,0.,50.);
     new TH1F(Form("phi_of_spins%s",sel_name[i_sel].Data()),"phi between spins;#phi (rad.);counts",10,-TMath::Pi(),TMath::Pi());
 
     new TH1F(Form("scattering_angle_theta_rough%s",sel_name[i_sel].Data()),"scattering angle theta;#theta (deg.);counts",200,0.,50.);
     new TH1F(Form("phi_of_spins_rough%s",sel_name[i_sel].Data()),"phi between spins;#phi (rad.);counts",10,-TMath::Pi(),TMath::Pi());
+
+    // 2D histograms
+    new TH2F(Form("lp_mass_vs_lp_momentum%s",sel_name[i_sel].Data()),"lp mass vs lp momentum;#Lambdap mass (GeV/c^{2});#Lambdap momentum;counts",100,2.,3.,100,0.,1.);
   }
 }
 
@@ -533,9 +605,6 @@ void Analysis(TFile* outfile){
         lvec_pim_from_lambda_mc.SetVectM(vec_trajectory_initial_momenta[i_trajectory], mass::pi_plus);
       }
     }
-    if(!is_lambda_charged_decay){
-      continue;
-    }
     TLorentzVector lvec_ppim_mc = lvec_proton_from_lambda_mc + lvec_pim_from_lambda_mc;
 
     TLorentzVector clvec_proton_from_lambda_lambda_rest_mc = lvec_proton_from_lambda_mc;
@@ -555,9 +624,6 @@ void Analysis(TFile* outfile){
       if(cdc_parent_ids[i_cdc]==lambda_id&&cdc_particle_ids[i_cdc]==-211){
         is_pim_from_lambda_detected_by_cdc = true;
       }
-    }
-    if(!is_proton_detected_by_cdc||!is_proton_from_lambda_detected_by_cdc||!is_pim_from_lambda_detected_by_cdc){
-      continue;
     }
 
     // checking tracker_layer1 & layer2 (proton to be detected)
@@ -587,45 +653,51 @@ void Analysis(TFile* outfile){
     }
 
     // checking cdc, tracker1, and tracker2 (to measure proton scattering angle)
-    TVector3 vec_proton_direction_at_cdc(0.,0.,0.);
     TVector3 vec_proton_position_at_cdc(0.,0.,0.);
+    TVector3 vec_proton_momentum_at_cdc(0.,0.,0.);
     TVector3 vec_proton_position_at_tracker_layer1(0.,0.,0.);
+    TVector3 vec_proton_momentum_at_tracker_layer1(0.,0.,0.);
     TVector3 vec_proton_position_at_tracker_layer2(0.,0.,0.);
+    TVector3 vec_proton_momentum_at_tracker_layer2(0.,0.,0.);
 
-    // position & direaction at cdc
+    // position & momentum at cdc
     for(int i_cdc=0; i_cdc<number_of_hits_in_cdc; ++i_cdc){
       if(cdc_parent_ids[i_cdc]==0&&cdc_particle_ids[i_cdc]==2212){
-        vec_proton_direction_at_cdc = vec_cdc_momenta[i_cdc].Unit();
+        vec_proton_momentum_at_cdc = vec_cdc_momenta[i_cdc];
         vec_proton_position_at_cdc = vec_cdc_positions[i_cdc];
       }
     }
 
-    // position & direction at tracker layer1
+    // position & momentum at tracker layer1
     if(is_proton_detected_by_tracker_layer1){
       for(int i_tracker_layer1=0; i_tracker_layer1<number_of_hits_in_tracker_layer1; ++i_tracker_layer1){
         if(tracker_layer1_parent_ids[i_tracker_layer1]==0&&tracker_layer1_particle_ids[i_tracker_layer1]==2212){
+          vec_proton_momentum_at_tracker_layer1 = vec_tracker_layer1_momenta[i_tracker_layer1];
           vec_proton_position_at_tracker_layer1 = vec_tracker_layer1_positions[i_tracker_layer1];
         }
       }
       if(vec_proton_position_at_tracker_layer1.Mag()==0.){
         for(int i_tracker_layer1=0; i_tracker_layer1<number_of_hits_in_tracker_layer1; ++i_tracker_layer1){
           if(tracker_layer1_parent_ids[i_tracker_layer1]==proton_id&&tracker_layer1_particle_ids[i_tracker_layer1]==2212){
+            vec_proton_momentum_at_tracker_layer1 = vec_tracker_layer1_momenta[i_tracker_layer1];
             vec_proton_position_at_tracker_layer1 = vec_tracker_layer1_positions[i_tracker_layer1];
           }
         }
       }
     }
 
-    // position & direction at tracker layer2
+    // position & momentum at tracker layer2
     if(is_proton_detected_by_tracker_layer2){
       for(int i_tracker_layer2=0; i_tracker_layer2<number_of_hits_in_tracker_layer2; ++i_tracker_layer2){
         if(tracker_layer2_parent_ids[i_tracker_layer2]==0&&tracker_layer2_particle_ids[i_tracker_layer2]==2212){
+          vec_proton_momentum_at_tracker_layer2 = vec_tracker_layer2_momenta[i_tracker_layer2];
           vec_proton_position_at_tracker_layer2 = vec_tracker_layer2_positions[i_tracker_layer2];
         }
       }
       if(vec_proton_position_at_tracker_layer2.Mag()==0.){
         for(int i_tracker_layer2=0; i_tracker_layer2<number_of_hits_in_tracker_layer2; ++i_tracker_layer2){
           if(tracker_layer2_parent_ids[i_tracker_layer2]==proton_id&&tracker_layer2_particle_ids[i_tracker_layer2]==2212){
+            vec_proton_momentum_at_tracker_layer2 = vec_tracker_layer2_momenta[i_tracker_layer2];
             vec_proton_position_at_tracker_layer2 = vec_tracker_layer2_positions[i_tracker_layer2];
           }
         }
@@ -635,12 +707,22 @@ void Analysis(TFile* outfile){
     Double_t ncbarrel_radius = 535. + 3./2. + 50./2.; /* mm */
     TVector3 vec_proton_position_at_ncbarrel = ncbarrel_radius * vec_proton_position_at_cdc.Unit();
 
+    TVector3 vec_proton_direction_at_cdc = vec_proton_momentum_at_cdc.Unit();
+    TVector3 vec_proton_direction_at_tracker_layer1 = vec_proton_momentum_at_tracker_layer1.Unit();
+    TVector3 vec_proton_direction_at_tracker_layer2 = vec_proton_momentum_at_tracker_layer2.Unit();
+
     TVector3 vec_proton_direction_after_scattering = (vec_proton_position_at_tracker_layer2 - vec_proton_position_at_tracker_layer1).Unit();
     TVector3 vec_proton_direction_after_scattering_rough = (vec_proton_position_at_tracker_layer1 - vec_proton_position_at_ncbarrel).Unit();
 
     // expected spin direction of lambda
     TVector3 vec_lambda_expected_spin_direction = clvec_proton_from_lambda_lambda_rest_mc.Vect().Unit();
     TVector3 vec_lambda_expectec_spin_direction_perp = (vec_lambda_expected_spin_direction - (vec_lambda_expected_spin_direction.Dot(vec_proton_direction_at_cdc))*vec_proton_direction_at_cdc).Unit();
+
+    // scattering angle mc value
+    Double_t scattering_angle_theta_mc = acos(vec_proton_direction_at_cdc.Dot(vec_proton_direction_at_tracker_layer1)) /TMath::Pi()*180.;
+
+    // momentum difference between cdc and tracker layer
+    Double_t proton_momentum_difference_between_cdc_and_tracker_layer1 = fabs(vec_proton_momentum_at_tracker_layer1.Mag() - vec_proton_momentum_at_cdc.Mag());
 
     // scattering angle with two trackers
     Double_t scattering_angle_theta = acos(vec_proton_direction_at_cdc.Dot(vec_proton_direction_after_scattering)) /TMath::Pi()*180.;
@@ -668,6 +750,10 @@ void Analysis(TFile* outfile){
     // ====================================================================================================
     // event selections
     // ====================================================================================================
+    bool are_all_detected_by_cdc = false;
+    if(is_proton_detected_by_cdc&&is_proton_from_lambda_detected_by_cdc&&is_pim_from_lambda_detected_by_cdc){
+      are_all_detected_by_cdc = true;
+    }
     bool are_momenta_over_threshold = false;
     Double_t proton_momentum_ll = 100.;
     Double_t pim_momentum_ll = 100.;
@@ -700,30 +786,53 @@ void Analysis(TFile* outfile){
     // ====================================================================================================
 
 
-    TString sel_name[5] = {
+    TString sel_name[10] = {
       "",
-      "_mom_both",
-      "_mom_both_asym",
-      "_mom_one",
-      "_mom_one_asym"
+      "_charged",
+      "_charged_mom",
+      "_charged_mom_cdc",
+      "_charged_mom_cdc_both",
+      "_charged_mom_cdc_both_asym",
+      "_charged_mom_cdc_one",
+      "_charged_mom_cdc_one_asym",
+      "_charged_mom_cdc_lay1",
+      "_charged_mom_cdc_lay1_asym"
     };
-    bool sel_flag[5];
-    sel_flag[0] =  true;
-    sel_flag[1] = are_momenta_over_threshold & are_both_trackers_fired;
-    sel_flag[2] = are_momenta_over_threshold & are_both_trackers_fired & is_asymmetric_scattering;
-    sel_flag[3] = are_momenta_over_threshold & is_tracker_layer1_fired & !are_both_trackers_fired;
-    sel_flag[4] = are_momenta_over_threshold & is_tracker_layer1_fired & !are_both_trackers_fired & is_asymmetric_scattering;
+    bool sel_flag[10];
+    sel_flag[0] = true;
+    sel_flag[1] = is_lambda_charged_decay;
+    sel_flag[2] = is_lambda_charged_decay & are_momenta_over_threshold;
+    sel_flag[3] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc;
+    sel_flag[4] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc  & are_both_trackers_fired;
+    sel_flag[5] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc  & are_both_trackers_fired & is_asymmetric_scattering;
+    sel_flag[6] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc  & is_tracker_layer1_fired & !are_both_trackers_fired;
+    sel_flag[7] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc  & is_tracker_layer1_fired & !are_both_trackers_fired & is_asymmetric_scattering;
+    sel_flag[8] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc  & is_proton_detected_by_tracker_layer1;
+    sel_flag[9] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc  & is_proton_detected_by_tracker_layer1 & is_asymmetric_scattering;
 
     // Fill histograms
-    for(int i_sel = 0; i_sel<5; ++i_sel){
+    for(int i_sel = 0; i_sel<10; ++i_sel){
       if(sel_flag[i_sel]){
-        ((TH1F*)outfile->Get(Form("proton_momentum%s",sel_name[i_sel].Data())))->Fill(lvec_proton_mc.P()/1000.);
+        ((TH1F*)outfile->Get(Form("lambda_momentum%s",sel_name[i_sel].Data())))->Fill(lvec_lambda_mc.P()/1000.);
+        ((TH1F*)outfile->Get(Form("proton_momentum%s",sel_name[i_sel].Data())))->Fill(lvec_proton_mc.P()/1001.);
         ((TH1F*)outfile->Get(Form("proton_from_lambda_momentum%s",sel_name[i_sel].Data())))->Fill(lvec_proton_from_lambda_mc.P()/1000.);
         ((TH1F*)outfile->Get(Form("pim_from_lambda_momentum%s",sel_name[i_sel].Data())))->Fill(lvec_pim_from_lambda_mc.P()/1000.);
         ((TH1F*)outfile->Get(Form("lp_mass%s",sel_name[i_sel].Data())))->Fill(lvec_lp_mc.M()/1000.);
         ((TH1F*)outfile->Get(Form("lp_momentum%s",sel_name[i_sel].Data())))->Fill(lvec_lp_mc.P()/1000.);
+
+        ((TH2F*)outfile->Get(Form("lp_mass_vs_lp_momentum%s",sel_name[i_sel].Data())))->Fill(lvec_lp_mc.M()/1000.,lvec_lp_mc.P()/1000.);
+
         ((TH1F*)outfile->Get(Form("ppim_mass%s",sel_name[i_sel].Data())))->Fill(lvec_ppim_mc.M()/1000.);
         ((TH1F*)outfile->Get(Form("ppim_momentum%s",sel_name[i_sel].Data())))->Fill(lvec_ppim_mc.P()/1000.);
+
+        ((TH1F*)outfile->Get(Form("proton_momentum_at_cdc%s",sel_name[i_sel].Data())))->Fill(vec_proton_momentum_at_cdc.Mag()/1000.);
+        ((TH1F*)outfile->Get(Form("proton_momentum_at_tracker_layer1%s",sel_name[i_sel].Data())))->Fill(vec_proton_momentum_at_tracker_layer1.Mag()/1000.);
+        ((TH1F*)outfile->Get(Form("proton_momentum_at_tracker_layer2%s",sel_name[i_sel].Data())))->Fill(vec_proton_momentum_at_tracker_layer2.Mag()/1000.);
+
+        ((TH1F*)outfile->Get(Form("proton_momentum_difference_between_cdc_and_tracker_layer1%s",sel_name[i_sel].Data())))->Fill(proton_momentum_difference_between_cdc_and_tracker_layer1/1000.);
+
+        ((TH1F*)outfile->Get(Form("scattering_angle_theta_mc%s",sel_name[i_sel].Data())))->Fill(scattering_angle_theta_mc);
+
         ((TH1F*)outfile->Get(Form("scattering_angle_theta%s",sel_name[i_sel].Data())))->Fill(scattering_angle_theta);
         ((TH1F*)outfile->Get(Form("scattering_angle_theta_rough%s",sel_name[i_sel].Data())))->Fill(scattering_angle_theta_rough);
         ((TH1F*)outfile->Get(Form("phi_of_spins%s",sel_name[i_sel].Data())))->Fill(phi_of_spins);
