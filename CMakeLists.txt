@@ -74,8 +74,8 @@ set(KNN_simple_polarimeter_SCRIPTS
 
 foreach(_script ${KNN_simple_polarimeter_SCRIPTS})
   configure_file(
-    ${PROJECT_SOURCE_DIR}/${_script}
-    ${PROJECT_BINARY_DIR}/${_script}
+    ${PROJECT_SOURCE_DIR}/macro/${_script}
+    ${PROJECT_BINARY_DIR}/macro/${_script}
     COPYONLY
     )
 endforeach()
