@@ -54,7 +54,7 @@ int main(int argc,char** argv)
 {
   std::string physics_list_name = "QGSP_BERT_HP";
   std::string out_file_name = "root/mc_out";
-  std::string macro_name = "run.mac";
+  std::string macro_name = "macro/run.mac";
 
   std::istringstream iss;
   std::cout<<"argc : "<<argc<<std::endl;
@@ -130,9 +130,9 @@ int main(int argc,char** argv)
     UImanager->ApplyCommand(command+fileName);
   }
   else {
-    UImanager->ApplyCommand("/control/execute init_vis.mac");
+    UImanager->ApplyCommand("/control/execute macro/init_vis.mac");
     if (ui->IsGUI()) {
-      UImanager->ApplyCommand("/control/execute gui.mac");
+      UImanager->ApplyCommand("/control/execute macro/gui.mac");
     }     
     // start interactive session
     ui->SessionStart();
