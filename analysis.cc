@@ -51,10 +51,10 @@ int main(int argc,char** argv)
   CreateHistograms(outfile);
 
   Analysis(outfile);
-
-  //DrawHistograms(outfile, out_pdf_name);
-
   outfile->Write();
+
+  DrawHistograms(outfile, out_pdf_name);
+
   outfile->Close();
 }
 
