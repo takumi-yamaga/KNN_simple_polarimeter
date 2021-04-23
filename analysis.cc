@@ -52,7 +52,7 @@ int main(int argc,char** argv)
 
   Analysis(outfile);
 
-  DrawHistograms(outfile, out_pdf_name);
+  //DrawHistograms(outfile, out_pdf_name);
 
   outfile->Write();
   outfile->Close();

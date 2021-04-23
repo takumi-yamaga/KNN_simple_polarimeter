@@ -109,20 +109,22 @@ void DrawHistograms(TFile* outfile, std::string pdf_name){
   text->SetTextAlign(22);
   text->SetTextSize(0.1);
 
-  TString sel_name[10] = {
+  TString sel_name[12] = {
     "",
     "_charged",
     "_charged_mom",
     "_charged_mom_cdc",
     "_charged_mom_cdc_both",
     "_charged_mom_cdc_both_asym",
+    "_charged_mom_cdc_both_sel",
+    "_charged_mom_cdc_both_sel_asym",
     "_charged_mom_cdc_one",
     "_charged_mom_cdc_one_asym",
     "_charged_mom_cdc_lay1",
     "_charged_mom_cdc_lay1_asym"
   };
 
-  for(int i_sel=0; i_sel<10; ++i_sel){
+  for(int i_sel=0; i_sel<12; ++i_sel){
     std::cout << sel_name[i_sel].Data() << std::endl;
     c_title->Clear();
     c_title->cd();
@@ -298,20 +300,22 @@ void DrawHistograms(TFile* outfile, std::string pdf_name){
 void CreateHistograms(TFile* outfile){
   outfile->cd();
 
-  TString sel_name[10] = {
+  TString sel_name[12] = {
     "",
     "_charged",
     "_charged_mom",
     "_charged_mom_cdc",
     "_charged_mom_cdc_both",
     "_charged_mom_cdc_both_asym",
+    "_charged_mom_cdc_both_sel",
+    "_charged_mom_cdc_both_sel_asym",
     "_charged_mom_cdc_one",
     "_charged_mom_cdc_one_asym",
     "_charged_mom_cdc_lay1",
     "_charged_mom_cdc_lay1_asym"
   };
 
-  for(int i_sel=0; i_sel<10; ++i_sel){
+  for(int i_sel=0; i_sel<12; ++i_sel){
     // 1D histograms
     new TH1F(Form("lambda_momentum%s",sel_name[i_sel].Data()),"lambda momentum;lambda momentum (GeV/c);counts",200,0.,2.);
     new TH1F(Form("proton_momentum%s",sel_name[i_sel].Data()),"proton momentum;proton momentum (GeV/c);counts",200,0.,2.);
@@ -330,10 +334,10 @@ void CreateHistograms(TFile* outfile){
     new TH1F(Form("scattering_angle_theta_mc%s",sel_name[i_sel].Data()),"scattering angle theta mc value;#theta (deg.);counts",200,0.,50.);
 
     new TH1F(Form("scattering_angle_theta%s",sel_name[i_sel].Data()),"scattering angle theta;#theta (deg.);counts",200,0.,50.);
-    new TH1F(Form("phi_of_spins%s",sel_name[i_sel].Data()),"phi between spins;#phi (rad.);counts",10,-TMath::Pi(),TMath::Pi());
+    new TH1F(Form("phi_of_spins%s",sel_name[i_sel].Data()),"phi between spins;#phi (rad.);counts",10,-1.,1.);
 
     new TH1F(Form("scattering_angle_theta_rough%s",sel_name[i_sel].Data()),"scattering angle theta;#theta (deg.);counts",200,0.,50.);
-    new TH1F(Form("phi_of_spins_rough%s",sel_name[i_sel].Data()),"phi between spins;#phi (rad.);counts",10,-TMath::Pi(),TMath::Pi());
+    new TH1F(Form("phi_of_spins_rough%s",sel_name[i_sel].Data()),"phi between spins;#phi (rad.);counts",10,-1.,1.);
 
     // 2D histograms
     new TH2F(Form("lp_mass_vs_lp_momentum%s",sel_name[i_sel].Data()),"lp mass vs lp momentum;#Lambdap mass (GeV/c^{2});#Lambdap momentum;counts",100,2.,3.,100,0.,1.);
@@ -778,7 +782,7 @@ void Analysis(TFile* outfile){
 
     bool is_scattering_angle_in_region = false;
     Double_t theta_sel_ll = 6.;
-    Double_t theta_sel_ul = 14.;
+    Double_t theta_sel_ul = 30.;
     if(theta_sel_ll<scattering_angle_theta&&scattering_angle_theta<theta_sel_ul){
       is_scattering_angle_in_region = true;
     }
@@ -786,32 +790,36 @@ void Analysis(TFile* outfile){
     // ====================================================================================================
 
 
-    TString sel_name[10] = {
+    TString sel_name[12] = {
       "",
       "_charged",
       "_charged_mom",
       "_charged_mom_cdc",
       "_charged_mom_cdc_both",
       "_charged_mom_cdc_both_asym",
+      "_charged_mom_cdc_both_sel",
+      "_charged_mom_cdc_both_sel_asym",
       "_charged_mom_cdc_one",
       "_charged_mom_cdc_one_asym",
       "_charged_mom_cdc_lay1",
       "_charged_mom_cdc_lay1_asym"
     };
-    bool sel_flag[10];
+    bool sel_flag[12];
     sel_flag[0] = true;
     sel_flag[1] = is_lambda_charged_decay;
     sel_flag[2] = is_lambda_charged_decay & are_momenta_over_threshold;
     sel_flag[3] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc;
-    sel_flag[4] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc  & are_both_trackers_fired;
-    sel_flag[5] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc  & are_both_trackers_fired & is_asymmetric_scattering;
-    sel_flag[6] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc  & is_tracker_layer1_fired & !are_both_trackers_fired;
-    sel_flag[7] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc  & is_tracker_layer1_fired & !are_both_trackers_fired & is_asymmetric_scattering;
-    sel_flag[8] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc  & is_proton_detected_by_tracker_layer1;
-    sel_flag[9] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc  & is_proton_detected_by_tracker_layer1 & is_asymmetric_scattering;
+    sel_flag[4] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & are_both_trackers_fired;
+    sel_flag[5] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & are_both_trackers_fired & is_asymmetric_scattering;
+    sel_flag[6] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & are_both_trackers_fired & is_scattering_angle_in_region;
+    sel_flag[7] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & are_both_trackers_fired & is_scattering_angle_in_region & is_asymmetric_scattering;
+    sel_flag[8] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_tracker_layer1_fired & !are_both_trackers_fired;
+    sel_flag[9] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_tracker_layer1_fired & !are_both_trackers_fired & is_asymmetric_scattering;
+    sel_flag[10] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_detected_by_tracker_layer1;
+    sel_flag[11] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_detected_by_tracker_layer1 & is_asymmetric_scattering;
 
     // Fill histograms
-    for(int i_sel = 0; i_sel<10; ++i_sel){
+    for(int i_sel = 0; i_sel<12; ++i_sel){
       if(sel_flag[i_sel]){
         ((TH1F*)outfile->Get(Form("lambda_momentum%s",sel_name[i_sel].Data())))->Fill(lvec_lambda_mc.P()/1000.);
         ((TH1F*)outfile->Get(Form("proton_momentum%s",sel_name[i_sel].Data())))->Fill(lvec_proton_mc.P()/1001.);
@@ -835,8 +843,8 @@ void Analysis(TFile* outfile){
 
         ((TH1F*)outfile->Get(Form("scattering_angle_theta%s",sel_name[i_sel].Data())))->Fill(scattering_angle_theta);
         ((TH1F*)outfile->Get(Form("scattering_angle_theta_rough%s",sel_name[i_sel].Data())))->Fill(scattering_angle_theta_rough);
-        ((TH1F*)outfile->Get(Form("phi_of_spins%s",sel_name[i_sel].Data())))->Fill(phi_of_spins);
-        ((TH1F*)outfile->Get(Form("phi_of_spins_rough%s",sel_name[i_sel].Data())))->Fill(phi_of_spins_rough);
+        ((TH1F*)outfile->Get(Form("phi_of_spins%s",sel_name[i_sel].Data())))->Fill(phi_of_spins/TMath::Pi());
+        ((TH1F*)outfile->Get(Form("phi_of_spins_rough%s",sel_name[i_sel].Data())))->Fill(phi_of_spins_rough/TMath::Pi());
       }
     }
 

@@ -170,7 +170,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
   // NCbarrel_layer1 ====================================================================================
-  auto ncbarrel_layer1_size_thickness = 30.*mm;
+  auto ncbarrel_layer1_size_thickness = 10.*mm;
   auto ncbarrel_layer1_size_r = chcbarrel_size_r + chcbarrel_size_thickness/2. + ncbarrel_layer1_size_thickness/2.;
   auto ncbarrel_layer1_size_z = 2570.*mm;
   // -----
@@ -204,7 +204,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
   // NCbarrel_layer2 ====================================================================================
-  auto ncbarrel_layer2_size_thickness = 30.*mm;
+  auto ncbarrel_layer2_size_thickness = 50.*mm;
   auto ncbarrel_layer2_size_r = tracker_layer1_size_r + tracker_layer1_size_thickness/2. + ncbarrel_layer2_size_thickness/2.;
   auto ncbarrel_layer2_size_z = 2570.*mm;
   // -----
@@ -212,7 +212,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     = new G4Tubs("ncbarrel_layer2_solid",ncbarrel_layer2_size_r-(ncbarrel_layer2_size_thickness-kSpace)/2.,ncbarrel_layer2_size_r+(ncbarrel_layer2_size_thickness-kSpace)/2.,ncbarrel_layer2_size_z/2.,0.,2.*TMath::Pi());
   // -----
   ncbarrel_layer2_logical_
-    = new G4LogicalVolume(ncbarrel_layer2_solid,scintillator,"ncbarrel_layer2_logical");
+    = new G4LogicalVolume(ncbarrel_layer2_solid,air,"ncbarrel_layer2_logical");
   // -----
   auto ncbarrel_layer2_physical
     = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),ncbarrel_layer2_logical_,"ncbarrel_layer2_logical",
