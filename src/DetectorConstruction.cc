@@ -169,8 +169,15 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   // ====================================================================================================
 
 
+  // ====================================================================================================
+  auto ncbarrel_thickness = 50.*mm;
+  auto tracker_thickness  =  5.*mm;
+  auto space_thickness    = 50.*mm;
+  // ====================================================================================================
+
+
   // NCbarrel_layer1 ====================================================================================
-  auto ncbarrel_layer1_size_thickness = 70.*mm;
+  auto ncbarrel_layer1_size_thickness = ncbarrel_thickness;
   auto ncbarrel_layer1_size_r = chcbarrel_size_r + chcbarrel_size_thickness/2. + ncbarrel_layer1_size_thickness/2.;
   auto ncbarrel_layer1_size_z = 2570.*mm;
   // -----
@@ -178,7 +185,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     = new G4Tubs("ncbarrel_layer1_solid",ncbarrel_layer1_size_r-(ncbarrel_layer1_size_thickness-kSpace)/2.,ncbarrel_layer1_size_r+(ncbarrel_layer1_size_thickness-kSpace)/2.,ncbarrel_layer1_size_z/2.,0.,2.*TMath::Pi());
   // -----
   ncbarrel_layer1_logical_
-    = new G4LogicalVolume(ncbarrel_layer1_solid,carbon,"ncbarrel_layer1_logical");
+    = new G4LogicalVolume(ncbarrel_layer1_solid,scintillator,"ncbarrel_layer1_logical");
   // -----
   auto ncbarrel_layer1_physical
     = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),ncbarrel_layer1_logical_,"ncbarrel_layer1_logical",
@@ -187,7 +194,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
   // Tracker_layer1 =====================================================================================
-  auto tracker_layer1_size_thickness = 5.*mm;
+  auto tracker_layer1_size_thickness = tracker_thickness;
   auto tracker_layer1_size_r = ncbarrel_layer1_size_r + ncbarrel_layer1_size_thickness/2. + tracker_layer1_size_thickness/2.;
   auto tracker_layer1_size_z = 2570.*mm;
   // -----
@@ -203,26 +210,14 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   // ====================================================================================================
 
 
-  // NCbarrel_layer2 ====================================================================================
-  auto ncbarrel_layer2_size_thickness = 50.*mm;
-  auto ncbarrel_layer2_size_r = tracker_layer1_size_r + tracker_layer1_size_thickness/2. + ncbarrel_layer2_size_thickness/2.;
-  auto ncbarrel_layer2_size_z = 2570.*mm;
-  // -----
-  auto ncbarrel_layer2_solid
-    = new G4Tubs("ncbarrel_layer2_solid",ncbarrel_layer2_size_r-(ncbarrel_layer2_size_thickness-kSpace)/2.,ncbarrel_layer2_size_r+(ncbarrel_layer2_size_thickness-kSpace)/2.,ncbarrel_layer2_size_z/2.,0.,2.*TMath::Pi());
-  // -----
-  ncbarrel_layer2_logical_
-    = new G4LogicalVolume(ncbarrel_layer2_solid,air,"ncbarrel_layer2_logical");
-  // -----
-  auto ncbarrel_layer2_physical
-    = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),ncbarrel_layer2_logical_,"ncbarrel_layer2_logical",
-        magnetic_logical_,false,0,checkOverlaps);
+  // Space ==============================================================================================
+  auto space_layer1to2_size_thickness = space_thickness;
   // ====================================================================================================
 
 
   // Tracker_layer2 =====================================================================================
-  auto tracker_layer2_size_thickness = 5.*mm;
-  auto tracker_layer2_size_r = ncbarrel_layer2_size_r + ncbarrel_layer2_size_thickness/2. + tracker_layer2_size_thickness/2.;
+  auto tracker_layer2_size_thickness = tracker_thickness;
+  auto tracker_layer2_size_r = ncbarrel_layer1_size_r + ncbarrel_layer1_size_thickness/2. + space_layer1to2_size_thickness + tracker_layer2_size_thickness/2.;
   auto tracker_layer2_size_z = 2570.*mm;
   // -----
   auto tracker_layer2_solid
@@ -235,6 +230,176 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),tracker_layer2_logical_,"tracker_layer2_logical",
         magnetic_logical_,false,0,checkOverlaps);
   // ====================================================================================================
+
+
+  // NCbarrel_layer2 ====================================================================================
+  auto ncbarrel_layer2_size_thickness = ncbarrel_thickness;
+  auto ncbarrel_layer2_size_r = tracker_layer2_size_r + tracker_layer2_size_thickness/2. + ncbarrel_layer2_size_thickness/2.;
+  auto ncbarrel_layer2_size_z = 2570.*mm;
+  // -----
+  auto ncbarrel_layer2_solid
+    = new G4Tubs("ncbarrel_layer2_solid",ncbarrel_layer2_size_r-(ncbarrel_layer2_size_thickness-kSpace)/2.,ncbarrel_layer2_size_r+(ncbarrel_layer2_size_thickness-kSpace)/2.,ncbarrel_layer2_size_z/2.,0.,2.*TMath::Pi());
+  // -----
+  ncbarrel_layer2_logical_
+    = new G4LogicalVolume(ncbarrel_layer2_solid,scintillator,"ncbarrel_layer2_logical");
+  // -----
+  auto ncbarrel_layer2_physical
+    = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),ncbarrel_layer2_logical_,"ncbarrel_layer2_logical",
+        magnetic_logical_,false,0,checkOverlaps);
+  // ====================================================================================================
+
+
+  // Tracker_layer3 =====================================================================================
+  auto tracker_layer3_size_thickness = tracker_thickness;
+  auto tracker_layer3_size_r = ncbarrel_layer2_size_r + ncbarrel_layer2_size_thickness/2. + tracker_layer3_size_thickness/2.;
+  auto tracker_layer3_size_z = 2570.*mm;
+  // -----
+  auto tracker_layer3_solid
+    = new G4Tubs("tracker_layer3_solid",tracker_layer3_size_r-(tracker_layer3_size_thickness-kSpace)/2.,tracker_layer3_size_r+(tracker_layer3_size_thickness-kSpace)/2.,tracker_layer3_size_z/2.,0.,2.*TMath::Pi());
+  // -----
+  tracker_layer3_logical_
+    = new G4LogicalVolume(tracker_layer3_solid,scintillator,"tracker_layer3_logical");
+  // -----
+  auto tracker_layer3_physical
+    = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),tracker_layer3_logical_,"tracker_layer3_logical",
+        magnetic_logical_,false,0,checkOverlaps);
+  // ====================================================================================================
+
+
+  // Space ==============================================================================================
+  auto space_layer2to3_size_thickness = space_thickness;
+  // ====================================================================================================
+
+
+  // Tracker_layer4 =====================================================================================
+  auto tracker_layer4_size_thickness = tracker_thickness;
+  auto tracker_layer4_size_r = ncbarrel_layer2_size_r + ncbarrel_layer2_size_thickness/2. + space_layer2to3_size_thickness + tracker_layer4_size_thickness/2.;
+  auto tracker_layer4_size_z = 2570.*mm;
+  // -----
+  auto tracker_layer4_solid
+    = new G4Tubs("tracker_layer4_solid",tracker_layer4_size_r-(tracker_layer4_size_thickness-kSpace)/2.,tracker_layer4_size_r+(tracker_layer4_size_thickness-kSpace)/2.,tracker_layer4_size_z/2.,0.,2.*TMath::Pi());
+  // -----
+  tracker_layer4_logical_
+    = new G4LogicalVolume(tracker_layer4_solid,scintillator,"tracker_layer4_logical");
+  // -----
+  auto tracker_layer4_physical
+    = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),tracker_layer4_logical_,"tracker_layer4_logical",
+        magnetic_logical_,false,0,checkOverlaps);
+  // ====================================================================================================
+
+
+  // NCbarrel_layer3 ====================================================================================
+  auto ncbarrel_layer3_size_thickness = ncbarrel_thickness;
+  auto ncbarrel_layer3_size_r = tracker_layer4_size_r + tracker_layer4_size_thickness/2. + ncbarrel_layer3_size_thickness/2.;
+  auto ncbarrel_layer3_size_z = 2570.*mm;
+  // -----
+  auto ncbarrel_layer3_solid
+    = new G4Tubs("ncbarrel_layer3_solid",ncbarrel_layer3_size_r-(ncbarrel_layer3_size_thickness-kSpace)/2.,ncbarrel_layer3_size_r+(ncbarrel_layer3_size_thickness-kSpace)/2.,ncbarrel_layer3_size_z/2.,0.,2.*TMath::Pi());
+  // -----
+  ncbarrel_layer3_logical_
+    = new G4LogicalVolume(ncbarrel_layer3_solid,scintillator,"ncbarrel_layer3_logical");
+  // -----
+  auto ncbarrel_layer3_physical
+    = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),ncbarrel_layer3_logical_,"ncbarrel_layer3_logical",
+        magnetic_logical_,false,0,checkOverlaps);
+  // ====================================================================================================
+
+
+  // Tracker_layer5 =====================================================================================
+  auto tracker_layer5_size_thickness = tracker_thickness;
+  auto tracker_layer5_size_r = ncbarrel_layer3_size_r + ncbarrel_layer3_size_thickness/2. + tracker_layer5_size_thickness/2.;
+  auto tracker_layer5_size_z = 2570.*mm;
+  // -----
+  auto tracker_layer5_solid
+    = new G4Tubs("tracker_layer5_solid",tracker_layer5_size_r-(tracker_layer5_size_thickness-kSpace)/2.,tracker_layer5_size_r+(tracker_layer5_size_thickness-kSpace)/2.,tracker_layer5_size_z/2.,0.,2.*TMath::Pi());
+  // -----
+  tracker_layer5_logical_
+    = new G4LogicalVolume(tracker_layer5_solid,scintillator,"tracker_layer5_logical");
+  // -----
+  auto tracker_layer5_physical
+    = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),tracker_layer5_logical_,"tracker_layer5_logical",
+        magnetic_logical_,false,0,checkOverlaps);
+  // ====================================================================================================
+
+
+  // Space ==============================================================================================
+  auto space_layer3to4_size_thickness = space_thickness;
+  // ====================================================================================================
+
+
+  // Tracker_layer6 =====================================================================================
+  auto tracker_layer6_size_thickness = tracker_thickness;
+  auto tracker_layer6_size_r = ncbarrel_layer3_size_r + ncbarrel_layer3_size_thickness/2. + space_layer3to4_size_thickness + tracker_layer6_size_thickness/2.;
+  auto tracker_layer6_size_z = 2570.*mm;
+  // -----
+  auto tracker_layer6_solid
+    = new G4Tubs("tracker_layer6_solid",tracker_layer6_size_r-(tracker_layer6_size_thickness-kSpace)/2.,tracker_layer6_size_r+(tracker_layer6_size_thickness-kSpace)/2.,tracker_layer6_size_z/2.,0.,2.*TMath::Pi());
+  // -----
+  tracker_layer6_logical_
+    = new G4LogicalVolume(tracker_layer6_solid,scintillator,"tracker_layer6_logical");
+  // -----
+  auto tracker_layer6_physical
+    = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),tracker_layer6_logical_,"tracker_layer6_logical",
+        magnetic_logical_,false,0,checkOverlaps);
+  // ====================================================================================================
+
+
+  // NCbarrel_layer4 ====================================================================================
+  auto ncbarrel_layer4_size_thickness = ncbarrel_thickness;
+  auto ncbarrel_layer4_size_r = tracker_layer6_size_r + tracker_layer6_size_thickness/2. + ncbarrel_layer4_size_thickness/2.;
+  auto ncbarrel_layer4_size_z = 2570.*mm;
+  // -----
+  auto ncbarrel_layer4_solid
+    = new G4Tubs("ncbarrel_layer4_solid",ncbarrel_layer4_size_r-(ncbarrel_layer4_size_thickness-kSpace)/2.,ncbarrel_layer4_size_r+(ncbarrel_layer4_size_thickness-kSpace)/2.,ncbarrel_layer4_size_z/2.,0.,2.*TMath::Pi());
+  // -----
+  ncbarrel_layer4_logical_
+    = new G4LogicalVolume(ncbarrel_layer4_solid,scintillator,"ncbarrel_layer4_logical");
+  // -----
+  auto ncbarrel_layer4_physical
+    = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),ncbarrel_layer4_logical_,"ncbarrel_layer4_logical",
+        magnetic_logical_,false,0,checkOverlaps);
+  // ====================================================================================================
+
+
+  // Tracker_layer7 =====================================================================================
+  auto tracker_layer7_size_thickness = tracker_thickness;
+  auto tracker_layer7_size_r = ncbarrel_layer4_size_r + ncbarrel_layer4_size_thickness/2. + tracker_layer7_size_thickness/2.;
+  auto tracker_layer7_size_z = 2570.*mm;
+  // -----
+  auto tracker_layer7_solid
+    = new G4Tubs("tracker_layer7_solid",tracker_layer7_size_r-(tracker_layer7_size_thickness-kSpace)/2.,tracker_layer7_size_r+(tracker_layer7_size_thickness-kSpace)/2.,tracker_layer7_size_z/2.,0.,2.*TMath::Pi());
+  // -----
+  tracker_layer7_logical_
+    = new G4LogicalVolume(tracker_layer7_solid,scintillator,"tracker_layer7_logical");
+  // -----
+  auto tracker_layer7_physical
+    = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),tracker_layer7_logical_,"tracker_layer7_logical",
+        magnetic_logical_,false,0,checkOverlaps);
+  // ====================================================================================================
+
+
+  // Space ==============================================================================================
+  auto space_layer4to5_size_thickness = space_thickness;
+  // ====================================================================================================
+
+
+  // Tracker_layer8 =====================================================================================
+  auto tracker_layer8_size_thickness = tracker_thickness;
+  auto tracker_layer8_size_r = ncbarrel_layer4_size_r + ncbarrel_layer4_size_thickness/2. + space_layer4to5_size_thickness + tracker_layer8_size_thickness/2.;
+  auto tracker_layer8_size_z = 2570.*mm;
+  // -----
+  auto tracker_layer8_solid
+    = new G4Tubs("tracker_layer8_solid",tracker_layer8_size_r-(tracker_layer8_size_thickness-kSpace)/2.,tracker_layer8_size_r+(tracker_layer8_size_thickness-kSpace)/2.,tracker_layer8_size_z/2.,0.,2.*TMath::Pi());
+  // -----
+  tracker_layer8_logical_
+    = new G4LogicalVolume(tracker_layer8_solid,scintillator,"tracker_layer8_logical");
+  // -----
+  auto tracker_layer8_physical
+    = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),tracker_layer8_logical_,"tracker_layer8_logical",
+        magnetic_logical_,false,0,checkOverlaps);
+  // ====================================================================================================
+
+
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -273,12 +438,44 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   ncbarrel_layer2_logical_->SetVisAttributes(visAttributes);
   fVisAttributes.push_back(visAttributes);
   // -----
+  visAttributes = new G4VisAttributes(Colors::Scintillator());
+  ncbarrel_layer3_logical_->SetVisAttributes(visAttributes);
+  fVisAttributes.push_back(visAttributes);
+  // -----
+  visAttributes = new G4VisAttributes(Colors::Scintillator());
+  ncbarrel_layer4_logical_->SetVisAttributes(visAttributes);
+  fVisAttributes.push_back(visAttributes);
+  // -----
   visAttributes = new G4VisAttributes(Colors::WirePlane());
   tracker_layer1_logical_->SetVisAttributes(visAttributes);
   fVisAttributes.push_back(visAttributes);
   // -----
   visAttributes = new G4VisAttributes(Colors::WirePlane());
   tracker_layer2_logical_->SetVisAttributes(visAttributes);
+  fVisAttributes.push_back(visAttributes);
+  // -----
+  visAttributes = new G4VisAttributes(Colors::WirePlane());
+  tracker_layer3_logical_->SetVisAttributes(visAttributes);
+  fVisAttributes.push_back(visAttributes);
+  // -----
+  visAttributes = new G4VisAttributes(Colors::WirePlane());
+  tracker_layer4_logical_->SetVisAttributes(visAttributes);
+  fVisAttributes.push_back(visAttributes);
+  // -----
+  visAttributes = new G4VisAttributes(Colors::WirePlane());
+  tracker_layer5_logical_->SetVisAttributes(visAttributes);
+  fVisAttributes.push_back(visAttributes);
+  // -----
+  visAttributes = new G4VisAttributes(Colors::WirePlane());
+  tracker_layer6_logical_->SetVisAttributes(visAttributes);
+  fVisAttributes.push_back(visAttributes);
+  // -----
+  visAttributes = new G4VisAttributes(Colors::WirePlane());
+  tracker_layer7_logical_->SetVisAttributes(visAttributes);
+  fVisAttributes.push_back(visAttributes);
+  // -----
+  visAttributes = new G4VisAttributes(Colors::WirePlane());
+  tracker_layer8_logical_->SetVisAttributes(visAttributes);
   fVisAttributes.push_back(visAttributes);
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
