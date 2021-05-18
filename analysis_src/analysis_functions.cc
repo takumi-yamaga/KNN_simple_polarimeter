@@ -1,6 +1,7 @@
 // analysis_functions.cc
 
 #include"analysis_functions.hh"
+#include"resolution_functions.hh"
 #include"DrawTools.h"
 #include"MyConstants.h"
 
@@ -349,23 +350,29 @@ void DrawHistograms(TFile* outfile, std::string pdf_name){
 void CreateHistograms(TFile* outfile){
   outfile->cd();
 
-  TString sel_name[12] = {
-    "",
-    "_charged",
-    "_charged_mom",
-    "_charged_mom_cdc",
-    "_charged_mom_cdc_proton_both",
-    "_charged_mom_cdc_proton_both_asym",
-    "_charged_mom_cdc_proton_both_sel",
-    "_charged_mom_cdc_proton_both_sel_asym",
-    "_charged_mom_cdc_proton_from_lambda_both",
-    "_charged_mom_cdc_proton_from_lambda_both_asym",
-    "_charged_mom_cdc_proton_from_lambda_both_sel",
-    "_charged_mom_cdc_proton_from_lambda_both_sel_asym",
+  TString sel_name[18] = {
+      "",
+      "_charged",
+      "_charged_mom",
+      "_charged_mom_cdc",
+      "_charged_mom_cdc_proton_both",
+      "_charged_mom_cdc_proton_both_asym",
+      "_charged_mom_cdc_proton_both_sel",
+      "_charged_mom_cdc_proton_both_sel_asym",
+      "_charged_mom_cdc_proton_both_sel_mqsel",
+      "_charged_mom_cdc_proton_both_selmeas",
+      "_charged_mom_cdc_proton_both_selmeas_asym",
+      "_charged_mom_cdc_proton_both_selmeas_mqsel",
+      "_charged_mom_cdc_proton_from_lambda_both",
+      "_charged_mom_cdc_proton_from_lambda_both_asym",
+      "_charged_mom_cdc_proton_from_lambda_both_sel",
+      "_charged_mom_cdc_proton_from_lambda_both_sel_asym",
+      "_charged_mom_cdc_proton_from_lambda_both_selmeas",
+      "_charged_mom_cdc_proton_from_lambda_both_selmeas_asym",
   };
 
-  for(int i_sel=0; i_sel<12; ++i_sel){
-      // 1D histograms
+  for(int i_sel=0; i_sel<18; ++i_sel){
+      // generated
       new TH1F(Form("lambda_momentum%s",sel_name[i_sel].Data()),"lambda momentum;lambda momentum (GeV/c);counts",200,0.,2.);
       new TH1F(Form("proton_momentum%s",sel_name[i_sel].Data()),"proton momentum;proton momentum (GeV/c);counts",200,0.,2.);
       new TH1F(Form("proton_from_lambda_momentum%s",sel_name[i_sel].Data()),"proton from lambda momentum;proton from #Lambda momentum (GeV/c);counts",200,0.,2.);
@@ -375,6 +382,10 @@ void CreateHistograms(TFile* outfile){
       new TH1F(Form("ppim_mass%s",sel_name[i_sel].Data()),"ppim mass;p#pi^{#minus} mass (GeV/c^{2});counts",100,1.,2.);
       new TH1F(Form("ppim_momentum%s",sel_name[i_sel].Data()),"ppim momentum;p#pi^{#minus} momentum (GeV/c);counts",200,0.,2.);
 
+      new TH2F(Form("lp_mass_vs_lp_momentum%s",sel_name[i_sel].Data()),"lp mass vs lp momentum;#Lambdap mass (GeV/c^{2});#Lambdap momentum;counts",100,2.,3.,100,0.,1.);
+
+
+      // momentum at detector
       new TH1F(Form("proton_momentum_at_cdc%s",sel_name[i_sel].Data()),"proton momentum at cdc;proton momentum (GeV/c);counts",200,0.,2.);
       new TH1F(Form("proton_momentum_at_tracker_layer1%s",sel_name[i_sel].Data()),"proton momentum at tracker_layer1;proton momentum (GeV/c);counts",200,0.,2.);
       new TH1F(Form("proton_momentum_at_tracker_layer2%s",sel_name[i_sel].Data()),"proton momentum at tracker_layer2;proton momentum (GeV/c);counts",200,0.,2.);
@@ -383,19 +394,41 @@ void CreateHistograms(TFile* outfile){
       new TH1F(Form("proton_from_lambda_momentum_at_tracker_layer1%s",sel_name[i_sel].Data()),"proton_from_lambda momentum at tracker_layer1;proton_from_lambda momentum (GeV/c);counts",200,0.,2.);
       new TH1F(Form("proton_from_lambda_momentum_at_tracker_layer2%s",sel_name[i_sel].Data()),"proton_from_lambda momentum at tracker_layer2;proton_from_lambda momentum (GeV/c);counts",200,0.,2.);
 
+
+      // momenutm difference
       new TH1F(Form("proton_momentum_difference_between_cdc_and_tracker_layer1%s",sel_name[i_sel].Data()),"proton momentum difference between cdc and tracker layer1;proton momentum difference(GeV/c);counts",200,0.,0.5);
       new TH1F(Form("proton_from_lambda_momentum_difference_between_cdc_and_tracker_layer1%s",sel_name[i_sel].Data()),"proton_from_lambda momentum difference between cdc and tracker layer1;proton_from_lambda momentum difference(GeV/c);counts",200,0.,0.5);
 
+
+      // scattering angle and phi
       new TH1F(Form("proton_scattering_angle_theta_mc%s",sel_name[i_sel].Data()),"scattering angle theta mc value;#theta (deg.);counts",200,0.,50.);
       new TH1F(Form("proton_scattering_angle_theta%s",sel_name[i_sel].Data()),"scattering angle theta;#theta (deg.);counts",200,0.,50.);
+      new TH1F(Form("proton_scattering_angle_theta_meas%s",sel_name[i_sel].Data()),"scattering angle theta;#theta (deg.);counts",200,0.,50.);
       new TH1F(Form("proton_phi_of_spins%s",sel_name[i_sel].Data()),"phi between spins;#phi (rad.);counts",10,-1.,1.);
+      new TH1F(Form("proton_phi_of_spins_meas%s",sel_name[i_sel].Data()),"phi between spins;#phi (rad.);counts",10,-1.,1.);
+      new TH2F(Form("proton_phi_of_spins_vs_scattering_angle_theta%s",sel_name[i_sel].Data()),"phi between spins;#phi (rad.);counts",10,-1.,1.,200,0.,50.);
+      new TH2F(Form("proton_phi_of_spins_meas_vs_scattering_angle_theta_meas%s",sel_name[i_sel].Data()),"phi between spins;#phi (rad.);counts",10,-1.,1.,200,0.,50.);
 
       new TH1F(Form("proton_from_lambda_scattering_angle_theta_mc%s",sel_name[i_sel].Data()),"scattering angle theta mc value;#theta (deg.);counts",200,0.,50.);
       new TH1F(Form("proton_from_lambda_scattering_angle_theta%s",sel_name[i_sel].Data()),"scattering angle theta;#theta (deg.);counts",200,0.,50.);
+      new TH1F(Form("proton_from_lambda_scattering_angle_theta_meas%s",sel_name[i_sel].Data()),"scattering angle theta;#theta (deg.);counts",200,0.,50.);
       new TH1F(Form("proton_from_lambda_phi_of_spins%s",sel_name[i_sel].Data()),"phi between spins;#phi (rad.);counts",10,-1.,1.);
+      new TH1F(Form("proton_from_lambda_phi_of_spins_meas%s",sel_name[i_sel].Data()),"phi between spins;#phi (rad.);counts",10,-1.,1.);
+      new TH2F(Form("proton_from_lambda_phi_of_spins_vs_scattering_angle_theta%s",sel_name[i_sel].Data()),"phi between spins;#phi (rad.);counts",10,-1.,1.,200,0.,50.);
+      new TH2F(Form("proton_from_lambda_phi_of_spins_meas_vs_scattering_angle_theta_meas%s",sel_name[i_sel].Data()),"phi between spins;#phi (rad.);counts",10,-1.,1.,200,0.,50.);
 
-      // 2D histograms
-      new TH2F(Form("lp_mass_vs_lp_momentum%s",sel_name[i_sel].Data()),"lp mass vs lp momentum;#Lambdap mass (GeV/c^{2});#Lambdap momentum;counts",100,2.,3.,100,0.,1.);
+      // resolution
+      new TH1F(Form("proton_diff_phi_direction_at_cdc%s",sel_name[i_sel].Data()),"proton diff of phi;#phi (deg.);counts",200,-1.,1.);
+      new TH1F(Form("proton_diff_theta_direction_at_cdc%s",sel_name[i_sel].Data()),"proton diff of theta;#theta (deg.);counts",200,-5.,5.);
+      new TH1F(Form("proton_diff_phirho_position_at_cdc%s",sel_name[i_sel].Data()),"proton diff of phirho;#phi#rho (cm);counts",200,-0.2,0.2);
+      new TH1F(Form("proton_diff_z_position_at_cdc%s",sel_name[i_sel].Data()),"proton diff of z;z (cm);counts",200,-2.,2.);
+      new TH2F(Form("proton_diff_phi_direction_at_cdc_vs_diff_phirho_position_at_cdc%s",sel_name[i_sel].Data()),"proton diff of phi vs phirho;#phi (deg.);#phi#rho (cm);Counts",200,-1.,1.,200,-0.2,0.2);
+      new TH2F(Form("proton_diff_theta_direction_at_cdc_vs_diff_z_position_at_cdc%s",sel_name[i_sel].Data()),"proton diff of theta vs z;#theta (deg.);z (cm);Counts",200,-5.,5.,200,-2.,2.);
+      // -----
+      new TH1F(Form("proton_diff_phirho_position_at_tracker_layer1%s",sel_name[i_sel].Data()),"proton diff of phirho;#phi#rho (cm);counts",200,-1.,1.);
+      new TH1F(Form("proton_diff_z_position_at_tracker_layer1%s",sel_name[i_sel].Data()),"proton diff of z;z (cm);counts",200,-1.,1.);
+      new TH1F(Form("proton_diff_phirho_position_at_tracker_layer2%s",sel_name[i_sel].Data()),"proton diff of phirho;#phi#rho (cm);counts",200,-1.,1.);
+      new TH1F(Form("proton_diff_z_position_at_tracker_layer2%s",sel_name[i_sel].Data()),"proton diff of z;z (cm);counts",200,-1.,1.);
   }
 }
 
@@ -832,7 +865,7 @@ void Analysis(TFile* outfile){
             }
         }
 
-        // obtained positions
+        // obtained directions
         TVector3 vec_proton_direction_at_cdc = vec_proton_momentum_at_cdc.Unit();
         TVector3 vec_proton_direction_at_tracker_layer1 = vec_proton_momentum_at_tracker_layer1.Unit();
         TVector3 vec_proton_direction_at_tracker_layer2 = vec_proton_momentum_at_tracker_layer2.Unit();
@@ -842,17 +875,56 @@ void Analysis(TFile* outfile){
         TVector3 vec_proton_from_lambda_direction_at_tracker_layer2 = vec_proton_from_lambda_momentum_at_tracker_layer2.Unit();
 
 
+        // resolution
+        TVector3 vec_proton_direction_at_cdc_meas = vec_proton_direction_at_cdc;
+        TVector3 vec_proton_position_at_cdc_meas = vec_proton_position_at_cdc;
+        CDCResolution(vec_proton_position_at_cdc_meas,vec_proton_direction_at_cdc_meas);
+        // ----- 
+        TVector3 vec_proton_position_at_tracker_layer1_meas = vec_proton_position_at_tracker_layer1;
+        TrackerResolution(vec_proton_position_at_tracker_layer1_meas);
+        // ----- 
+        TVector3 vec_proton_position_at_tracker_layer2_meas = vec_proton_position_at_tracker_layer2;
+        TrackerResolution(vec_proton_position_at_tracker_layer2_meas);
+        // ----- 
+        TVector3 vec_proton_from_lambda_direction_at_cdc_meas = vec_proton_from_lambda_direction_at_cdc;
+        TVector3 vec_proton_from_lambda_position_at_cdc_meas = vec_proton_from_lambda_position_at_cdc;
+        CDCResolution(vec_proton_from_lambda_position_at_cdc_meas,vec_proton_from_lambda_direction_at_cdc_meas);
+        // ----- 
+        TVector3 vec_proton_from_lambda_position_at_tracker_layer1_meas = vec_proton_from_lambda_position_at_tracker_layer1;
+        TrackerResolution(vec_proton_from_lambda_position_at_tracker_layer1_meas);
+        // ----- 
+        TVector3 vec_proton_from_lambda_position_at_tracker_layer2_meas = vec_proton_from_lambda_position_at_tracker_layer2;
+        TrackerResolution(vec_proton_from_lambda_position_at_tracker_layer2_meas);
+        // ----- 
+        Double_t proton_diff_phi_direction_at_cdc = vec_proton_direction_at_cdc.Phi() - vec_proton_direction_at_cdc_meas.Phi();
+        Double_t proton_diff_theta_direction_at_cdc = vec_proton_direction_at_cdc.Theta() - vec_proton_direction_at_cdc_meas.Theta();
+        Double_t proton_diff_phirho_position_at_cdc = (vec_proton_position_at_cdc.Phi() - vec_proton_position_at_cdc_meas.Phi()) * vec_proton_position_at_cdc.Perp();
+        Double_t proton_diff_z_position_at_cdc = -(vec_proton_position_at_cdc.Z() - vec_proton_position_at_cdc_meas.Z());
+        // ----- 
+        Double_t proton_diff_phirho_position_at_tracker_layer1 = (vec_proton_position_at_tracker_layer1.Phi() - vec_proton_position_at_tracker_layer1_meas.Phi()) * vec_proton_position_at_tracker_layer1.Perp();
+        Double_t proton_diff_z_position_at_tracker_layer1 = -(vec_proton_position_at_tracker_layer1.Z() - vec_proton_position_at_tracker_layer1_meas.Z());
+        // ----- 
+        Double_t proton_diff_phirho_position_at_tracker_layer2 = (vec_proton_position_at_tracker_layer2.Phi() - vec_proton_position_at_tracker_layer2_meas.Phi()) * vec_proton_position_at_tracker_layer2.Perp();
+        Double_t proton_diff_z_position_at_tracker_layer2 = -(vec_proton_position_at_tracker_layer2.Z() - vec_proton_position_at_tracker_layer2_meas.Z());
+        // ----- 
+
+
         // obtained direction after scattering
         TVector3 vec_proton_direction_after_scattering = (vec_proton_position_at_tracker_layer2 - vec_proton_position_at_tracker_layer1).Unit();
         // -----
         TVector3 vec_proton_from_lambda_direction_after_scattering = (vec_proton_from_lambda_position_at_tracker_layer2 - vec_proton_from_lambda_position_at_tracker_layer1).Unit();
+        // -----
+        TVector3 vec_proton_direction_after_scattering_meas = (vec_proton_position_at_tracker_layer2_meas - vec_proton_position_at_tracker_layer1_meas).Unit();
+        // -----
+        TVector3 vec_proton_from_lambda_direction_after_scattering_meas = (vec_proton_from_lambda_position_at_tracker_layer2_meas - vec_proton_from_lambda_position_at_tracker_layer1_meas).Unit();
 
 
         // expected spin direction of lambda
         TVector3 vec_lambda_expected_spin_direction = clvec_proton_from_lambda_lambda_rest_mc.Vect().Unit();
         TVector3 vec_lambda_expected_spin_direction_perp_to_proton = (vec_lambda_expected_spin_direction - (vec_lambda_expected_spin_direction.Dot(vec_proton_direction_at_cdc))*vec_proton_direction_at_cdc).Unit();
+        TVector3 vec_lambda_expected_spin_direction_perp_to_proton_meas = (vec_lambda_expected_spin_direction - (vec_lambda_expected_spin_direction.Dot(vec_proton_direction_at_cdc_meas))*vec_proton_direction_at_cdc_meas).Unit();
         TVector3 vec_lambda_expected_spin_direction_perp_to_proton_from_lambda = (vec_lambda_expected_spin_direction - (vec_lambda_expected_spin_direction.Dot(vec_proton_from_lambda_direction_at_cdc))*vec_proton_from_lambda_direction_at_cdc).Unit();
-
+        TVector3 vec_lambda_expected_spin_direction_perp_to_proton_from_lambda_meas = (vec_lambda_expected_spin_direction - (vec_lambda_expected_spin_direction.Dot(vec_proton_from_lambda_direction_at_cdc_meas))*vec_proton_from_lambda_direction_at_cdc_meas).Unit();
 
         // scattering angle mc value
         Double_t proton_scattering_angle_theta_mc = acos(vec_proton_direction_at_cdc.Dot(vec_proton_direction_at_tracker_layer1)) /TMath::Pi()*180.;
@@ -870,22 +942,38 @@ void Analysis(TFile* outfile){
         Double_t proton_scattering_angle_theta = acos(vec_proton_direction_at_cdc.Dot(vec_proton_direction_after_scattering)) /TMath::Pi()*180.;
         // -----
         Double_t proton_from_lambda_scattering_angle_theta = acos(vec_proton_from_lambda_direction_at_cdc.Dot(vec_proton_from_lambda_direction_after_scattering)) /TMath::Pi()*180.;
+        // -----
+        Double_t proton_scattering_angle_theta_meas = acos(vec_proton_direction_at_cdc_meas.Dot(vec_proton_direction_after_scattering_meas)) /TMath::Pi()*180.;
+        // -----
+        Double_t proton_from_lambda_scattering_angle_theta_meas = acos(vec_proton_from_lambda_direction_at_cdc_meas.Dot(vec_proton_from_lambda_direction_after_scattering_meas)) /TMath::Pi()*180.;
 
 
         // expected spin direction of proton with two trackers
         TVector3 vec_proton_expected_spin_direction = vec_proton_direction_at_cdc.Cross(vec_proton_direction_after_scattering).Unit();
         // -----
         TVector3 vec_proton_from_lambda_expected_spin_direction = vec_proton_from_lambda_direction_at_cdc.Cross(vec_proton_from_lambda_direction_after_scattering).Unit();
+        // -----
+        TVector3 vec_proton_expected_spin_direction_meas = vec_proton_direction_at_cdc_meas.Cross(vec_proton_direction_after_scattering_meas).Unit();
+        // -----
+        TVector3 vec_proton_from_lambda_expected_spin_direction_meas = vec_proton_from_lambda_direction_at_cdc_meas.Cross(vec_proton_from_lambda_direction_after_scattering_meas).Unit();
 
 
         // phi angle between lambda and proton spins with two trackers
         Double_t proton_phi_of_spins = acos(vec_lambda_expected_spin_direction_perp_to_proton.Dot(vec_proton_expected_spin_direction));
-        Double_t proton_phi_sign = vec_lambda_expected_spin_direction.Dot(vec_proton_direction_at_cdc.Cross(vec_proton_expected_spin_direction));
+        Double_t proton_phi_sign = vec_lambda_expected_spin_direction_perp_to_proton.Dot(vec_proton_direction_at_cdc.Cross(vec_proton_expected_spin_direction));
         proton_phi_of_spins *= proton_phi_sign/fabs(proton_phi_sign);
         // -----
         Double_t proton_from_lambda_phi_of_spins = acos(vec_lambda_expected_spin_direction_perp_to_proton_from_lambda.Dot(vec_proton_from_lambda_expected_spin_direction));
-        Double_t proton_from_lambda_phi_sign = vec_lambda_expected_spin_direction.Dot(vec_proton_from_lambda_direction_at_cdc.Cross(vec_proton_from_lambda_expected_spin_direction));
+        Double_t proton_from_lambda_phi_sign = vec_lambda_expected_spin_direction_perp_to_proton_from_lambda.Dot(vec_proton_from_lambda_direction_at_cdc.Cross(vec_proton_from_lambda_expected_spin_direction));
         proton_from_lambda_phi_of_spins *= proton_from_lambda_phi_sign/fabs(proton_from_lambda_phi_sign);
+        // -----
+        Double_t proton_phi_of_spins_meas = acos(vec_lambda_expected_spin_direction_perp_to_proton_meas.Dot(vec_proton_expected_spin_direction_meas));
+        Double_t proton_phi_sign_meas = vec_lambda_expected_spin_direction_perp_to_proton_meas.Dot(vec_proton_direction_at_cdc_meas.Cross(vec_proton_expected_spin_direction_meas));
+        proton_phi_of_spins_meas *= proton_phi_sign_meas/fabs(proton_phi_sign_meas);
+        // -----
+        Double_t proton_from_lambda_phi_of_spins_meas = acos(vec_lambda_expected_spin_direction_perp_to_proton_from_lambda_meas.Dot(vec_proton_from_lambda_expected_spin_direction_meas));
+        Double_t proton_from_lambda_phi_sign_meas = vec_lambda_expected_spin_direction_perp_to_proton_from_lambda_meas.Dot(vec_proton_from_lambda_direction_at_cdc_meas.Cross(vec_proton_from_lambda_expected_spin_direction_meas));
+        proton_from_lambda_phi_of_spins_meas *= proton_from_lambda_phi_sign_meas/fabs(proton_from_lambda_phi_sign_meas);
 
 
         // ====================================================================================================
@@ -920,6 +1008,10 @@ void Analysis(TFile* outfile){
         if(theta_sel_ll<proton_scattering_angle_theta&&proton_scattering_angle_theta<theta_sel_ul){
             is_proton_scattering_angle_in_region = true;
         }
+        bool is_proton_scattering_angle_meas_in_region = false;
+        if(theta_sel_ll<proton_scattering_angle_theta_meas&&proton_scattering_angle_theta_meas<theta_sel_ul){
+            is_proton_scattering_angle_meas_in_region = true;
+        }
 
         // for proton_from_lambda
         bool is_proton_from_lambda_detected_by_both_trackers = false;
@@ -937,24 +1029,45 @@ void Analysis(TFile* outfile){
             is_proton_from_lambda_scattering_angle_in_region = true;
         }
 
+        bool is_proton_from_lambda_scattering_angle_meas_in_region = false;
+        if(theta_sel_ll<proton_from_lambda_scattering_angle_theta_meas&&proton_from_lambda_scattering_angle_theta_meas<theta_sel_ul){
+            is_proton_from_lambda_scattering_angle_meas_in_region = true;
+        }
+
+        // for lp_mass & lp_momentum selection
+        bool is_lp_mass_in_kpp_region = false;
+        if(2.2<lvec_lp_mc.M()/1000.&&2.4<lvec_lp_mc.M()/1000.){
+            is_lp_mass_in_kpp_region = true;
+        }
+        bool is_lp_momentum_in_kpp_region = false;
+        if(lvec_lp_mc.P()/1000.<0.7){
+            is_lp_momentum_in_kpp_region = true;
+        }
+
         // ====================================================================================================
 
 
-        TString sel_name[12] = {
-            "",
-            "_charged",
-            "_charged_mom",
-            "_charged_mom_cdc",
-            "_charged_mom_cdc_proton_both",
-            "_charged_mom_cdc_proton_both_asym",
-            "_charged_mom_cdc_proton_both_sel",
-            "_charged_mom_cdc_proton_both_sel_asym",
-            "_charged_mom_cdc_proton_from_lambda_both",
-            "_charged_mom_cdc_proton_from_lambda_both_asym",
-            "_charged_mom_cdc_proton_from_lambda_both_sel",
-            "_charged_mom_cdc_proton_from_lambda_both_sel_asym",
+        TString sel_name[18] = {
+            /*  0 */ "",
+            /*  1 */ "_charged",
+            /*  2 */ "_charged_mom",
+            /*  3 */ "_charged_mom_cdc",
+            /*  4 */ "_charged_mom_cdc_proton_both",
+            /*  5 */ "_charged_mom_cdc_proton_both_asym",
+            /*  6 */ "_charged_mom_cdc_proton_both_sel",
+            /*  7 */ "_charged_mom_cdc_proton_both_sel_asym",
+            /*  8 */ "_charged_mom_cdc_proton_both_sel_mqsel",
+            /*  9 */ "_charged_mom_cdc_proton_both_selmeas",
+            /* 10 */ "_charged_mom_cdc_proton_both_selmeas_asym",
+            /* 11 */ "_charged_mom_cdc_proton_both_selmeas_mqsel",
+            /* 12 */ "_charged_mom_cdc_proton_from_lambda_both",
+            /* 13 */ "_charged_mom_cdc_proton_from_lambda_both_asym",
+            /* 14 */ "_charged_mom_cdc_proton_from_lambda_both_sel",
+            /* 15 */ "_charged_mom_cdc_proton_from_lambda_both_sel_asym",
+            /* 16 */ "_charged_mom_cdc_proton_from_lambda_both_selmeas",
+            /* 17 */ "_charged_mom_cdc_proton_from_lambda_both_selmeas_asym",
         };
-        bool sel_flag[12];
+        bool sel_flag[18];
         sel_flag[0] = true;
         sel_flag[1] = is_lambda_charged_decay;
         sel_flag[2] = is_lambda_charged_decay & are_momenta_over_threshold;
@@ -963,13 +1076,21 @@ void Analysis(TFile* outfile){
         sel_flag[5] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_detected_by_both_trackers & is_proton_asymmetric_scattering;
         sel_flag[6] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_detected_by_both_trackers & is_proton_scattering_angle_in_region;
         sel_flag[7] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_detected_by_both_trackers & is_proton_scattering_angle_in_region & is_proton_asymmetric_scattering;
-        sel_flag[8] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_from_lambda_detected_by_both_trackers;
-        sel_flag[9] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_from_lambda_detected_by_both_trackers & is_proton_from_lambda_asymmetric_scattering;
-        sel_flag[10] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_from_lambda_detected_by_both_trackers & is_proton_from_lambda_scattering_angle_in_region;
-        sel_flag[11] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_from_lambda_detected_by_both_trackers & is_proton_from_lambda_scattering_angle_in_region & is_proton_from_lambda_asymmetric_scattering;
+        sel_flag[8] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_detected_by_both_trackers & is_proton_scattering_angle_in_region & is_lp_mass_in_kpp_region & is_lp_momentum_in_kpp_region;
+        sel_flag[9] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_detected_by_both_trackers & is_proton_scattering_angle_meas_in_region;
+        sel_flag[10] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_detected_by_both_trackers & is_proton_scattering_angle_meas_in_region & is_proton_asymmetric_scattering;
+        sel_flag[11] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_detected_by_both_trackers & is_proton_scattering_angle_meas_in_region & is_lp_mass_in_kpp_region & is_lp_momentum_in_kpp_region;
+
+        sel_flag[12] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_from_lambda_detected_by_both_trackers;
+        sel_flag[13] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_from_lambda_detected_by_both_trackers & is_proton_from_lambda_asymmetric_scattering;
+        sel_flag[14] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_from_lambda_detected_by_both_trackers & is_proton_from_lambda_scattering_angle_in_region;
+        sel_flag[15] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_from_lambda_detected_by_both_trackers & is_proton_from_lambda_scattering_angle_in_region & is_proton_from_lambda_asymmetric_scattering;
+        sel_flag[16] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_from_lambda_detected_by_both_trackers & is_proton_from_lambda_scattering_angle_in_region & is_lp_mass_in_kpp_region & is_lp_momentum_in_kpp_region;
+        sel_flag[17] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_from_lambda_detected_by_both_trackers & is_proton_from_lambda_scattering_angle_meas_in_region;
+        sel_flag[18] = is_lambda_charged_decay & are_momenta_over_threshold & are_all_detected_by_cdc & is_proton_from_lambda_detected_by_both_trackers & is_proton_from_lambda_scattering_angle_meas_in_region & is_proton_from_lambda_asymmetric_scattering;
 
         // Fill histograms
-        for(int i_sel = 0; i_sel<12; ++i_sel){
+        for(int i_sel = 0; i_sel<18; ++i_sel){
             if(sel_flag[i_sel]){
                 ((TH1F*)outfile->Get(Form("lambda_momentum%s",sel_name[i_sel].Data())))->Fill(lvec_lambda_mc.P()/1000.);
                 ((TH1F*)outfile->Get(Form("proton_momentum%s",sel_name[i_sel].Data())))->Fill(lvec_proton_mc.P()/1001.);
@@ -996,16 +1117,35 @@ void Analysis(TFile* outfile){
 
                 ((TH1F*)outfile->Get(Form("proton_scattering_angle_theta_mc%s",sel_name[i_sel].Data())))->Fill(proton_scattering_angle_theta_mc);
                 ((TH1F*)outfile->Get(Form("proton_scattering_angle_theta%s",sel_name[i_sel].Data())))->Fill(proton_scattering_angle_theta);
+                ((TH1F*)outfile->Get(Form("proton_scattering_angle_theta_meas%s",sel_name[i_sel].Data())))->Fill(proton_scattering_angle_theta_meas);
                 ((TH1F*)outfile->Get(Form("proton_phi_of_spins%s",sel_name[i_sel].Data())))->Fill(proton_phi_of_spins/TMath::Pi());
+                ((TH1F*)outfile->Get(Form("proton_phi_of_spins_meas%s",sel_name[i_sel].Data())))->Fill(proton_phi_of_spins_meas/TMath::Pi());
+                ((TH2F*)outfile->Get(Form("proton_phi_of_spins_vs_scattering_angle_theta%s",sel_name[i_sel].Data())))->Fill(proton_phi_of_spins/TMath::Pi(),proton_scattering_angle_theta);
+                ((TH2F*)outfile->Get(Form("proton_phi_of_spins_meas_vs_scattering_angle_theta_meas%s",sel_name[i_sel].Data())))->Fill(proton_phi_of_spins_meas/TMath::Pi(),proton_scattering_angle_theta_meas);
 
                 ((TH1F*)outfile->Get(Form("proton_from_lambda_scattering_angle_theta_mc%s",sel_name[i_sel].Data())))->Fill(proton_from_lambda_scattering_angle_theta_mc);
                 ((TH1F*)outfile->Get(Form("proton_from_lambda_scattering_angle_theta%s",sel_name[i_sel].Data())))->Fill(proton_from_lambda_scattering_angle_theta);
+                ((TH1F*)outfile->Get(Form("proton_from_lambda_scattering_angle_theta_meas%s",sel_name[i_sel].Data())))->Fill(proton_from_lambda_scattering_angle_theta_meas);
                 ((TH1F*)outfile->Get(Form("proton_from_lambda_phi_of_spins%s",sel_name[i_sel].Data())))->Fill(proton_from_lambda_phi_of_spins/TMath::Pi());
+                ((TH1F*)outfile->Get(Form("proton_from_lambda_phi_of_spins_meas%s",sel_name[i_sel].Data())))->Fill(proton_from_lambda_phi_of_spins_meas/TMath::Pi());
+                ((TH2F*)outfile->Get(Form("proton_from_lambda_phi_of_spins_vs_scattering_angle_theta%s",sel_name[i_sel].Data())))->Fill(proton_from_lambda_phi_of_spins/TMath::Pi(),proton_from_lambda_scattering_angle_theta);
+                ((TH2F*)outfile->Get(Form("proton_from_lambda_phi_of_spins_meas_vs_scattering_angle_theta_meas%s",sel_name[i_sel].Data())))->Fill(proton_from_lambda_phi_of_spins_meas/TMath::Pi(),proton_from_lambda_scattering_angle_theta_meas);
+
+                ((TH1F*)outfile->Get(Form("proton_diff_phi_direction_at_cdc%s",sel_name[i_sel].Data())))->Fill(proton_diff_phi_direction_at_cdc/TMath::Pi()*180.);
+                ((TH1F*)outfile->Get(Form("proton_diff_theta_direction_at_cdc%s",sel_name[i_sel].Data())))->Fill(proton_diff_theta_direction_at_cdc/TMath::Pi()*180.);
+                ((TH1F*)outfile->Get(Form("proton_diff_phirho_position_at_cdc%s",sel_name[i_sel].Data())))->Fill(proton_diff_phirho_position_at_cdc);
+                ((TH1F*)outfile->Get(Form("proton_diff_z_position_at_cdc%s",sel_name[i_sel].Data())))->Fill(proton_diff_z_position_at_cdc);
+                ((TH2F*)outfile->Get(Form("proton_diff_theta_direction_at_cdc_vs_diff_z_position_at_cdc%s",sel_name[i_sel].Data())))->Fill(proton_diff_theta_direction_at_cdc/TMath::Pi()*180.,proton_diff_z_position_at_cdc);
+                ((TH2F*)outfile->Get(Form("proton_diff_phi_direction_at_cdc_vs_diff_phirho_position_at_cdc%s",sel_name[i_sel].Data())))->Fill(proton_diff_phi_direction_at_cdc/TMath::Pi()*180.,proton_diff_phirho_position_at_cdc);
+                ((TH1F*)outfile->Get(Form("proton_diff_phirho_position_at_tracker_layer1%s",sel_name[i_sel].Data())))->Fill(proton_diff_phirho_position_at_tracker_layer1);
+                ((TH1F*)outfile->Get(Form("proton_diff_z_position_at_tracker_layer1%s",sel_name[i_sel].Data())))->Fill(proton_diff_z_position_at_tracker_layer1);
+                ((TH1F*)outfile->Get(Form("proton_diff_phirho_position_at_tracker_layer2%s",sel_name[i_sel].Data())))->Fill(proton_diff_phirho_position_at_tracker_layer2);
+                ((TH1F*)outfile->Get(Form("proton_diff_z_position_at_tracker_layer2%s",sel_name[i_sel].Data())))->Fill(proton_diff_z_position_at_tracker_layer2);
             }
+
+
+            // end of event loop
         }
 
-
-        // end of event loop
     }
-
 }

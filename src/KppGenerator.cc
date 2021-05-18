@@ -67,6 +67,7 @@ void KppGenerator::Generate(TLorentzVector& lv_beam)
       Double_t val_func = f_kpp_mass_->Eval(mass_lp);
       val_func *= f_kpp_momtrans_->Eval(momtrans_lp);
       Double_t val_ran = random_->Uniform();
+      //if(kpp_mass_-10.<mass_lp&&mass_lp<kpp_mass_+10. && 390.<momtrans_lp&&momtrans_lp<410.){ break; }
       if(val_func>val_ran){ break; }
     }
   }
@@ -104,8 +105,7 @@ void KppGenerator::KppZeroMinusDecay()
   else if(random_ml<2.){
     ml_decay_ = 0;
   }
-  else{
-    ml_decay_ = 1;
+  else{ ml_decay_ = 1;
   }
 
   // ml_spin is always 0(J=0)
