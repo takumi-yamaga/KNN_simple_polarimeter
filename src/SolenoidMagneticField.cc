@@ -37,7 +37,7 @@
 
 SolenoidMagneticField::SolenoidMagneticField()
 : G4MagneticField(), 
-  messenger_(nullptr), magnetic_strength_z_(1.0*tesla)
+  messenger_(nullptr), magnetic_strength_z_(0.7*tesla)
 {
   // define commands for this class
   DefineCommands();

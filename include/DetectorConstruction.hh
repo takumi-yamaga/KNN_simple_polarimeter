@@ -76,6 +76,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume* ncbarrel_layer2_logical_;
     G4LogicalVolume* ncbarrel_layer3_logical_;
     G4LogicalVolume* ncbarrel_layer4_logical_;
+    G4LogicalVolume* ncbarrel_layer5_logical_;
     G4LogicalVolume* tracker_layer1_logical_;
     G4LogicalVolume* tracker_layer2_logical_;
     G4LogicalVolume* tracker_layer3_logical_;
@@ -84,6 +85,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume* tracker_layer6_logical_;
     G4LogicalVolume* tracker_layer7_logical_;
     G4LogicalVolume* tracker_layer8_logical_;
+    G4LogicalVolume* tracker_layer9_logical_;
+    G4LogicalVolume* tracker_layer10_logical_;
 
     std::vector<G4VisAttributes*> fVisAttributes;
     

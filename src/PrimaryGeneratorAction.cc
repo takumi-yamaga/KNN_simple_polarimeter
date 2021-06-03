@@ -38,7 +38,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   ConstructParticleGun();
 
   // create KppGenerator
-  kpp_generator_ = new KppGenerator(0,-1);
+  kpp_generator_ = new KppGenerator(1,-1);
 
   // define commands for this class
   DefineCommands();

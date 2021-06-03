@@ -46,7 +46,12 @@ G4ThreadLocal G4FieldManager* DetectorConstruction::field_manager_ = 0;
 
 DetectorConstruction::DetectorConstruction()
   : G4VUserDetectorConstruction(), 
-  cdc_logical_(nullptr), chcbarrel_logical_(nullptr), ncbarrel_layer1_logical_(nullptr), tracker_layer1_logical_(nullptr), tracker_layer2_logical_(nullptr)
+  cdc_logical_(nullptr),
+  chcbarrel_logical_(nullptr),
+  ncbarrel_layer1_logical_(nullptr), ncbarrel_layer2_logical_(nullptr), ncbarrel_layer3_logical_(nullptr), ncbarrel_layer4_logical_(nullptr), ncbarrel_layer5_logical_(nullptr),
+  tracker_layer1_logical_(nullptr), tracker_layer2_logical_(nullptr),
+  tracker_layer3_logical_(nullptr), tracker_layer4_logical_(nullptr), tracker_layer5_logical_(nullptr), tracker_layer6_logical_(nullptr),
+  tracker_layer7_logical_(nullptr), tracker_layer8_logical_(nullptr), tracker_layer9_logical_(nullptr), tracker_layer10_logical_(nullptr)
 {
 }
 
@@ -171,6 +176,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   // ====================================================================================================
   auto ncbarrel_thickness = 50.*mm;
+  auto carbon_thickness   = 50.*mm;
   auto tracker_thickness  =  5.*mm;
   auto space_thickness    = 50.*mm;
   // ====================================================================================================
@@ -217,7 +223,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   // Tracker_layer2 =====================================================================================
   auto tracker_layer2_size_thickness = tracker_thickness;
-  auto tracker_layer2_size_r = ncbarrel_layer1_size_r + ncbarrel_layer1_size_thickness/2. + space_layer1to2_size_thickness + tracker_layer2_size_thickness/2.;
+  auto tracker_layer2_size_r = tracker_layer1_size_r + tracker_layer1_size_thickness/2. + space_layer1to2_size_thickness + tracker_layer2_size_thickness/2.;
   auto tracker_layer2_size_z = 2570.*mm;
   // -----
   auto tracker_layer2_solid
@@ -233,7 +239,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
   // NCbarrel_layer2 ====================================================================================
-  auto ncbarrel_layer2_size_thickness = ncbarrel_thickness;
+  auto ncbarrel_layer2_size_thickness = carbon_thickness;
   auto ncbarrel_layer2_size_r = tracker_layer2_size_r + tracker_layer2_size_thickness/2. + ncbarrel_layer2_size_thickness/2.;
   auto ncbarrel_layer2_size_z = 2570.*mm;
   // -----
@@ -267,13 +273,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
   // Space ==============================================================================================
-  auto space_layer2to3_size_thickness = space_thickness;
+  auto space_layer3to4_size_thickness = space_thickness;
   // ====================================================================================================
 
 
   // Tracker_layer4 =====================================================================================
   auto tracker_layer4_size_thickness = tracker_thickness;
-  auto tracker_layer4_size_r = ncbarrel_layer2_size_r + ncbarrel_layer2_size_thickness/2. + space_layer2to3_size_thickness + tracker_layer4_size_thickness/2.;
+  auto tracker_layer4_size_r = tracker_layer3_size_r + tracker_layer3_size_thickness/2. + space_layer3to4_size_thickness + tracker_layer4_size_thickness/2.;
   auto tracker_layer4_size_z = 2570.*mm;
   // -----
   auto tracker_layer4_solid
@@ -289,7 +295,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
   // NCbarrel_layer3 ====================================================================================
-  auto ncbarrel_layer3_size_thickness = ncbarrel_thickness;
+  auto ncbarrel_layer3_size_thickness = carbon_thickness;
   auto ncbarrel_layer3_size_r = tracker_layer4_size_r + tracker_layer4_size_thickness/2. + ncbarrel_layer3_size_thickness/2.;
   auto ncbarrel_layer3_size_z = 2570.*mm;
   // -----
@@ -323,13 +329,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
   // Space ==============================================================================================
-  auto space_layer3to4_size_thickness = space_thickness;
+  auto space_layer5to6_size_thickness = space_thickness;
   // ====================================================================================================
 
 
   // Tracker_layer6 =====================================================================================
   auto tracker_layer6_size_thickness = tracker_thickness;
-  auto tracker_layer6_size_r = ncbarrel_layer3_size_r + ncbarrel_layer3_size_thickness/2. + space_layer3to4_size_thickness + tracker_layer6_size_thickness/2.;
+  auto tracker_layer6_size_r = tracker_layer5_size_r + tracker_layer5_size_thickness/2. + space_layer5to6_size_thickness + tracker_layer6_size_thickness/2.;
   auto tracker_layer6_size_z = 2570.*mm;
   // -----
   auto tracker_layer6_solid
@@ -345,7 +351,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
   // NCbarrel_layer4 ====================================================================================
-  auto ncbarrel_layer4_size_thickness = ncbarrel_thickness;
+  auto ncbarrel_layer4_size_thickness = carbon_thickness;
   auto ncbarrel_layer4_size_r = tracker_layer6_size_r + tracker_layer6_size_thickness/2. + ncbarrel_layer4_size_thickness/2.;
   auto ncbarrel_layer4_size_z = 2570.*mm;
   // -----
@@ -379,13 +385,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
   // Space ==============================================================================================
-  auto space_layer4to5_size_thickness = space_thickness;
+  auto space_layer7to8_size_thickness = space_thickness;
   // ====================================================================================================
 
 
   // Tracker_layer8 =====================================================================================
   auto tracker_layer8_size_thickness = tracker_thickness;
-  auto tracker_layer8_size_r = ncbarrel_layer4_size_r + ncbarrel_layer4_size_thickness/2. + space_layer4to5_size_thickness + tracker_layer8_size_thickness/2.;
+  auto tracker_layer8_size_r = tracker_layer7_size_r + tracker_layer7_size_thickness/2. + space_layer7to8_size_thickness + tracker_layer8_size_thickness/2.;
   auto tracker_layer8_size_z = 2570.*mm;
   // -----
   auto tracker_layer8_solid
@@ -396,6 +402,62 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   // -----
   auto tracker_layer8_physical
     = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),tracker_layer8_logical_,"tracker_layer8_logical",
+        magnetic_logical_,false,0,checkOverlaps);
+  // ====================================================================================================
+
+
+  // NCbarrel_layer5 ====================================================================================
+  auto ncbarrel_layer5_size_thickness = carbon_thickness;
+  auto ncbarrel_layer5_size_r = tracker_layer8_size_r + tracker_layer8_size_thickness/2. + ncbarrel_layer5_size_thickness/2.;
+  auto ncbarrel_layer5_size_z = 2570.*mm;
+  // -----
+  auto ncbarrel_layer5_solid
+    = new G4Tubs("ncbarrel_layer5_solid",ncbarrel_layer5_size_r-(ncbarrel_layer5_size_thickness-kSpace)/2.,ncbarrel_layer5_size_r+(ncbarrel_layer5_size_thickness-kSpace)/2.,ncbarrel_layer5_size_z/2.,0.,2.*TMath::Pi());
+  // -----
+  ncbarrel_layer5_logical_
+    = new G4LogicalVolume(ncbarrel_layer5_solid,scintillator,"ncbarrel_layer5_logical");
+  // -----
+  auto ncbarrel_layer5_physical
+    = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),ncbarrel_layer5_logical_,"ncbarrel_layer5_logical",
+        magnetic_logical_,false,0,checkOverlaps);
+  // ====================================================================================================
+
+
+  // Tracker_layer9 =====================================================================================
+  auto tracker_layer9_size_thickness = tracker_thickness;
+  auto tracker_layer9_size_r = ncbarrel_layer5_size_r + ncbarrel_layer5_size_thickness/2. + tracker_layer9_size_thickness/2.;
+  auto tracker_layer9_size_z = 2570.*mm;
+  // -----
+  auto tracker_layer9_solid
+    = new G4Tubs("tracker_layer9_solid",tracker_layer9_size_r-(tracker_layer9_size_thickness-kSpace)/2.,tracker_layer9_size_r+(tracker_layer9_size_thickness-kSpace)/2.,tracker_layer9_size_z/2.,0.,2.*TMath::Pi());
+  // -----
+  tracker_layer9_logical_
+    = new G4LogicalVolume(tracker_layer9_solid,scintillator,"tracker_layer9_logical");
+  // -----
+  auto tracker_layer9_physical
+    = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),tracker_layer9_logical_,"tracker_layer9_logical",
+        magnetic_logical_,false,0,checkOverlaps);
+  // ====================================================================================================
+
+
+  // Space ==============================================================================================
+  auto space_layer9to10_size_thickness = space_thickness;
+  // ====================================================================================================
+
+
+  // Tracker_layer10 =====================================================================================
+  auto tracker_layer10_size_thickness = tracker_thickness;
+  auto tracker_layer10_size_r = tracker_layer9_size_r + tracker_layer9_size_thickness/2. + space_layer9to10_size_thickness + tracker_layer10_size_thickness/2.;
+  auto tracker_layer10_size_z = 2570.*mm;
+  // -----
+  auto tracker_layer10_solid
+    = new G4Tubs("tracker_layer10_solid",tracker_layer10_size_r-(tracker_layer10_size_thickness-kSpace)/2.,tracker_layer10_size_r+(tracker_layer10_size_thickness-kSpace)/2.,tracker_layer10_size_z/2.,0.,2.*TMath::Pi());
+  // -----
+  tracker_layer10_logical_
+    = new G4LogicalVolume(tracker_layer10_solid,scintillator,"tracker_layer10_logical");
+  // -----
+  auto tracker_layer10_physical
+    = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),tracker_layer10_logical_,"tracker_layer10_logical",
         magnetic_logical_,false,0,checkOverlaps);
   // ====================================================================================================
 
@@ -446,6 +508,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   ncbarrel_layer4_logical_->SetVisAttributes(visAttributes);
   fVisAttributes.push_back(visAttributes);
   // -----
+  visAttributes = new G4VisAttributes(Colors::Scintillator());
+  ncbarrel_layer5_logical_->SetVisAttributes(visAttributes);
+  fVisAttributes.push_back(visAttributes);
+  // -----
   visAttributes = new G4VisAttributes(Colors::WirePlane());
   tracker_layer1_logical_->SetVisAttributes(visAttributes);
   fVisAttributes.push_back(visAttributes);
@@ -476,6 +542,14 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   // -----
   visAttributes = new G4VisAttributes(Colors::WirePlane());
   tracker_layer8_logical_->SetVisAttributes(visAttributes);
+  fVisAttributes.push_back(visAttributes);
+  // -----
+  visAttributes = new G4VisAttributes(Colors::WirePlane());
+  tracker_layer9_logical_->SetVisAttributes(visAttributes);
+  fVisAttributes.push_back(visAttributes);
+  // -----
+  visAttributes = new G4VisAttributes(Colors::WirePlane());
+  tracker_layer10_logical_->SetVisAttributes(visAttributes);
   fVisAttributes.push_back(visAttributes);
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -514,6 +588,38 @@ void DetectorConstruction::ConstructSDandField()
   auto tracker_layer2 = new DriftChamberSD(SDname="/tracker_layer2");
   sdManager->AddNewDetector(tracker_layer2);
   tracker_layer2_logical_->SetSensitiveDetector(tracker_layer2);
+  // -----
+  auto tracker_layer3 = new DriftChamberSD(SDname="/tracker_layer3");
+  sdManager->AddNewDetector(tracker_layer3);
+  tracker_layer3_logical_->SetSensitiveDetector(tracker_layer3);
+  // -----
+  auto tracker_layer4 = new DriftChamberSD(SDname="/tracker_layer4");
+  sdManager->AddNewDetector(tracker_layer4);
+  tracker_layer4_logical_->SetSensitiveDetector(tracker_layer4);
+  // -----
+  auto tracker_layer5 = new DriftChamberSD(SDname="/tracker_layer5");
+  sdManager->AddNewDetector(tracker_layer5);
+  tracker_layer5_logical_->SetSensitiveDetector(tracker_layer5);
+  // -----
+  auto tracker_layer6 = new DriftChamberSD(SDname="/tracker_layer6");
+  sdManager->AddNewDetector(tracker_layer6);
+  tracker_layer6_logical_->SetSensitiveDetector(tracker_layer6);
+  // -----
+  auto tracker_layer7 = new DriftChamberSD(SDname="/tracker_layer7");
+  sdManager->AddNewDetector(tracker_layer7);
+  tracker_layer7_logical_->SetSensitiveDetector(tracker_layer7);
+  // -----
+  auto tracker_layer8 = new DriftChamberSD(SDname="/tracker_layer8");
+  sdManager->AddNewDetector(tracker_layer8);
+  tracker_layer8_logical_->SetSensitiveDetector(tracker_layer8);
+  // -----
+  auto tracker_layer9 = new DriftChamberSD(SDname="/tracker_layer9");
+  sdManager->AddNewDetector(tracker_layer9);
+  tracker_layer9_logical_->SetSensitiveDetector(tracker_layer9);
+  // -----
+  auto tracker_layer10 = new DriftChamberSD(SDname="/tracker_layer10");
+  sdManager->AddNewDetector(tracker_layer10);
+  tracker_layer10_logical_->SetSensitiveDetector(tracker_layer10);
 
   // magnetic field ----------------------------------------------------------
   magnetic_field_ = new SolenoidMagneticField();

@@ -16,8 +16,8 @@ Double_t cdc_resolution_z_direction_rotated     = 7.98753e-1;
 Double_t cdc_resolution_z_position_rotated      = 1.06003e-1;
 Double_t cdc_resolution_z_rotation              = 4.06320e-1;
 // -----
-Double_t tracker_resolution_phi_position = 3.;
-Double_t tracker_resolution_z_position   = 3.;
+Double_t tracker_resolution_phi_position = 1.; // mm (sigma)
+Double_t tracker_resolution_z_position   = 1.; // mm (sigma)
 // -----
 
 void CDCResolution(TVector3& pos, TVector3& dir){
