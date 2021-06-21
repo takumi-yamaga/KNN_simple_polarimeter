@@ -189,7 +189,7 @@ void KppGenerator::KppOneMinusDecay()
   Double_t phi_ref = random_->Uniform(-TMath::Pi(),TMath::Pi());
   vec_reference_direction_ = TVector3(sin_theta_ref*cos(phi_ref),sin_theta_ref*sin(phi_ref),cos_theta_ref);
 
-  // ml_spin (of J=1)
+  // ml_spin (Kpp is J=1)
   Double_t random_ml = random_->Uniform(0.,3.);
   if(random_ml<1.){
     ml_spin_ = -1;
@@ -201,7 +201,8 @@ void KppGenerator::KppOneMinusDecay()
     ml_spin_ = 1;
   }
 
-  // j_lp (spin of lambda + p)
+
+  // j_lp (spin of lambda + p, J=0:J=1 = 1:3)
   Int_t j_lp = -999;
   if(random_->Uniform()<1./3.){
     j_lp = 0;
@@ -209,6 +210,7 @@ void KppGenerator::KppOneMinusDecay()
   else{
     j_lp = 1;
   }
+
 
   // ml_decay (of P-wave decay)
   if(ml_spin_==1){
